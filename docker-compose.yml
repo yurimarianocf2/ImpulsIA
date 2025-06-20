@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # n8n - Automação de Workflows
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: farmabot-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/webhook
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_ENCRYPTION_KEY=farmabot-encryption-key-32-chars
+      - N8N_USER_MANAGEMENT_DISABLED=true
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=farmabot123
+      - N8N_METRICS=true
+      - N8N_LOG_LEVEL=info
+      # Supabase connection
+      - SUPABASE_URL=https://fcdfunvzoxhobfskwsag.supabase.co
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZGZ1bnZ6b3hob2Jmc2t3c2FnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDM2NjgzNywiZXhwIjoyMDY1OTQyODM3fQ.NWuWMHMM_VCyeiEl8NPRxCg3I9gx7owyKy3nHprrskQ
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/home/node/.n8n/workflows
+    networks:
+      - farmabot-network
+
+  # Redis - Cache e Filas
+  redis:
+    image: redis:7-alpine
+    container_name: farmabot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - farmabot-network
+
+  # PostgreSQL Local (Backup/Dev)
+  postgres:
+    image: postgres:15
+    container_name: farmabot-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=farmabot_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=farmabot123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - farmabot-network
+
+volumes:
+  n8n_data:
+  redis_data:
+  postgres_data:
+
+networks:
+  farmabot-network:
+    driver: bridge

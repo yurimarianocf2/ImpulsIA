@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-g">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmaBot Pro - Automatize sua Farmácia no WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #10B981, #2563EB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 40%);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease-out;
+            opacity: 0;
+        }
+        .glow-button:hover::before {
+            opacity: 1;
+            width: 0;
+            height: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="py-24 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-extrabold gradient-text">
+                Transforme seu WhatsApp em uma Máquina de Vendas
+            </h1>
+            <p class="mt-6 text-lg text-gray-600">
+                O FarmaBot Pro é o atendente virtual inteligente que sua farmácia precisa para vender mais, atender melhor e crescer de forma sustentável. Tudo isso 24 horas por dia, 7 dias por semana.
+            </p>
+            <div class="mt-8 flex justify-center gap-4">
+                <a href="#pricing" class="glow-button bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition">
+                    Comece seu Teste Grátis de 7 Dias
+                </a>
+                <a href="#features" class="bg-white text-gray-700 font-semibold py-3 px-8 rounded-lg border border-gray-300 hover:bg-gray-100 transition">
+                    Ver Funcionalidades
+                </a>
+            </div>
+            <div class="mt-12">
+                <img src="https://www.launchuicomponents.com/app-light.png" alt="Dashboard FarmaBot Pro" class="rounded-lg shadow-2xl mx-auto">
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona Section -->
+    <section id="how-it-works" class="py-20 px-4 bg-gray-50">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">Como funciona o FarmaBot Pro?</h2>
+                <ul class="space-y-5 text-gray-700">
+                    <li class="flex items-start"><i class="fas fa-database text-blue-500 text-xl mt-1 mr-3"></i><span><strong>Banco de Dados Seguro:</strong> todos os cadastros de clientes e histórico de pedidos ficam armazenados com criptografia em servidores na nuvem, seguindo as melhores práticas de segurança LGPD.</span></li>
+                    <li class="flex items-start"><i class="fas fa-server text-blue-500 text-xl mt-1 mr-3"></i><span><strong>Servidor em Nuvem 99,9% UP:</strong> toda a inteligência roda em um servidor dedicado, garantindo velocidade e disponibilidade 24/7.</span></li>
+                    <li class="flex items-start"><i class="fas fa-motorcycle text-blue-500 text-xl mt-1 mr-3"></i><span><strong>Chamada automática de Motoboy:</strong> o bot identifica o endereço do cliente, contacta via telefone ou app o motoboy cadastrado mais próximo e acompanha a entrega.</span></li>
+                    <li class="flex items-start"><i class="fas fa-id-card text-blue-500 text-xl mt-1 mr-3"></i><span><strong>Reconhecimento de Clientes:</strong> se o número já estiver cadastrado, o atendimento fica ainda mais rápido. Caso contrário, o bot coleta os dados e cria o cadastro em segundos.</span></li>
+                    <li class="flex items-start"><i class="fas fa-cogs text-blue-500 text-xl mt-1 mr-3"></i><span><strong>Integração ERP:</strong> sincronize preços e estoque em tempo real para evitar rupturas e divergências.</span></li>
+                </ul>
+            </div>
+            <div class="text-center">
+                <img src="https://www.launchuicomponents.com/app-dark.png" alt="Fluxo FarmaBot" class="rounded-lg shadow-2xl mx-auto">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center text-gray-800">Tudo que sua farmácia precisa para decolar</h2>
+            <div class="mt-12 grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-8 border rounded-lg hover:shadow-xl transition">
+                    <i class="fas fa-search-dollar text-3xl text-blue-500"></i>
+                    <h3 class="mt-4 text-xl font-semibold">Pesquisa de Preços Inteligente</h3>
+                    <p class="mt-2 text-gray-600">Seu cliente pergunta, o FarmaBot responde na hora com o preço e a disponibilidade do produto, evitando a perda de vendas.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="p-8 border rounded-lg hover:shadow-xl transition">
+                    <i class="fas fa-headset text-3xl text-blue-500"></i>
+                    <h3 class="mt-4 text-xl font-semibold">Atendimento 24/7</h3>
+                    <p class="mt-2 text-gray-600">Seu negócio aberto o tempo todo. Venda e atenda mesmo quando a farmácia estiver fechada, inclusive de madrugada e feriados.</p>
+                </div>
+                <!-- Feature 2.1 New -->
+                <div class="p-8 border rounded-lg hover:shadow-xl transition">
+                    <i class="fas fa-motorcycle text-3xl text-blue-500"></i>
+                    <h3 class="mt-4 text-xl font-semibold">Motoboys Integrados</h3>
+                    <p class="mt-2 text-gray-600">O FarmaBot aciona automaticamente os motoboys cadastrados, reduzindo tempo de entrega e aumentando a satisfação do cliente.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="p-8 border rounded-lg hover:shadow-xl transition">
+                    <i class="fas fa-chart-line text-3xl text-blue-500"></i>
+                    <h3 class="mt-4 text-xl font-semibold">Dashboard e Relatórios</h3>
+                    <p class="mt-2 text-gray-600">Acesse um painel simples e intuitivo para configurar seu bot, acompanhar as vendas e entender o comportamento dos seus clientes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof/Testimonials Section -->
+    <section id="testimonials" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold text-gray-800">Milhares de farmácias já confiam no FarmaBot Pro</h2>
+            <div class="mt-12">
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <p class="text-xl text-gray-700">"Desde que implementamos o FarmaBot Pro, nossas vendas no WhatsApp aumentaram 60%. É como ter um vendedor a mais na equipe, que nunca dorme. Recomendo fortemente!"</p>
+                    <div class="mt-6 flex items-center justify-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Silva" class="w-12 h-12 rounded-full">
+                        <div class="ml-4 text-left">
+                            <p class="font-semibold">Carlos Silva</p>
+                            <p class="text-sm text-gray-500">Dono, Farmácia Saúde Mais</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4 bg-white">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-4xl font-bold text-gray-800">Planos flexíveis para sua necessidade</h2>
+            <p class="mt-4 text-lg text-gray-600">Comece de graça. Cancele quando quiser.</p>
+            <div class="mt-12 grid md:grid-cols-4 gap-8">
+                <!-- Promo Plan -->
+                <div class="border-4 border-green-500 rounded-lg p-8 relative transform hover:scale-105 transition bg-green-50">
+                    <p class="absolute top-0 -translate-y-1/2 bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full">PROMOÇÃO</p>
+                    <h3 class="text-2xl font-semibold">Micro Farmácias</h3>
+                    <p class="mt-4 text-4xl font-bold">R$ 300<span class="text-lg font-normal text-gray-500">/mês*</span></p>
+                    <p class="mt-2 text-sm text-gray-500">*(Implantação de R$ 5.000 já inclusa na promoção, manutenção real R$ 500/mês)</p>
+                    <ul class="mt-6 text-left space-y-4">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i>Até 800 conversas</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i>1 Número WhatsApp</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i>Motoboy Integrado</li>
+                    </ul>
+                    <a href="#" class="mt-8 block w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition">Garantir Promoção</a>
+                </div>
+                <!-- Plan 1 -->
+                <div class="border rounded-lg p-8 transform hover:scale-105 transition">
+                    <h3 class="text-2xl font-semibold">Starter</h3>
+                    <p class="mt-4 text-4xl font-bold">R$ 297<span class="text-lg font-normal text-gray-500">/mês</span></p>
+                    <ul class="mt-6 text-left space-y-4">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Até 1.000 conversas</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>1 Número WhatsApp</li>
+                    </ul>
+                    <a href="#" class="mt-8 block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">Começar Agora</a>
+                </div>
+                <!-- Plan 2 (Most Popular) -->
+                <div class="border-4 border-blue-500 rounded-lg p-8 relative transform hover:scale-105 transition">
+                    <p class="absolute top-0 -translate-y-1/2 bg-blue-500 text-white text-sm font-bold px-3 py-1 rounded-full">MAIS POPULAR</p>
+                    <h3 class="text-2xl font-semibold">Professional</h3>
+                    <p class="mt-4 text-4xl font-bold">R$ 597<span class="text-lg font-normal text-gray-500">/mês</span></p>
+                    <ul class="mt-6 text-left space-y-4">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Até 5.000 conversas</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>2 Números WhatsApp</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Integração ERP</li>
+                    </ul>
+                    <a href="#" class="mt-8 block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">Começar Agora</a>
+                </div>
+                <!-- Plan 3 -->
+                <div class="border rounded-lg p-8 transform hover:scale-105 transition">
+                    <h3 class="text-2xl font-semibold">Enterprise</h3>
+                    <p class="mt-4 text-4xl font-bold">R$ 997<span class="text-lg font-normal text-gray-500">/mês</span></p>
+                    <ul class="mt-6 text-left space-y-4">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Conversas ilimitadas</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Multi-loja</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>API Completa</li>
+                    </ul>
+                    <a href="#" class="mt-8 block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">Fale Conosco</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 text-center">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-800">Pronto para revolucionar sua farmácia?</h2>
+            <p class="mt-4 text-lg text-gray-600">Sem contrato, sem burocracia. Comece a vender mais hoje mesmo com seu teste grátis de 7 dias.</p>
+            <a href="#pricing" class="mt-8 inline-block glow-button bg-blue-600 text-white font-semibold py-4 px-10 rounded-lg shadow-lg hover:bg-blue-700 transition">
+                Quero meu teste grátis
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+        <div class="max-w-6xl mx-auto py-8 px-4 text-center text-gray-500">
+            <p>&copy; 2024 FarmaBot Pro. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html> 

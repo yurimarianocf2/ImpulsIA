@@ -1,0 +1,263 @@
+{
+  "name": "FarmaBot Pro - Workflow Principal",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook/whatsapp",
+        "responseMode": "responseNode",
+        "options": {
+          "domainWhitelist": "*.whatsapp.com"
+        }
+      },
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "id": "webhook-whatsapp"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Validar e extrair dados da mensagem WhatsApp\nconst body = $input.item.json.body;\n\nif (!body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {\n  return { error: 'Mensagem inválida' };\n}\n\nconst message = body.entry[0].changes[0].value.messages[0];\nconst contact = body.entry[0].changes[0].value.contacts[0];\n\nreturn {\n  messageId: message.id,\n  from: message.from,\n  type: message.type,\n  text: message.text?.body || '',\n  timestamp: message.timestamp,\n  contactName: contact.profile.name,\n  isValid: true\n};"
+      },
+      "name": "Processar Mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "id": "process-message"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "value1": "={{$json.text}}",
+              "operation": "contains",
+              "value2": "preço"
+            },
+            {
+              "value1": "={{$json.text}}",
+              "operation": "contains", 
+              "value2": "valor"
+            },
+            {
+              "value1": "={{$json.text}}",
+              "operation": "contains",
+              "value2": "quanto custa"
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "name": "É Consulta de Preço?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "id": "check-price-query"
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "select",
+        "schema": "public",
+        "table": "produtos",
+        "returnAll": true,
+        "where": {
+          "condition": "AND",
+          "values": [
+            {
+              "column": "nome",
+              "operator": "like",
+              "value": "={{$json.searchTerm}}%"
+            },
+            {
+              "column": "ativo",
+              "value": true
+            }
+          ]
+        }
+      },
+      "name": "Buscar no Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "id": "supabase-search"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.ERP_API_URL}}/api/produtos/consulta",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "termo",
+              "value": "={{$json.searchTerm}}"
+            },
+            {
+              "name": "loja_id",
+              "value": "={{$env.LOJA_ID}}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Consultar ERP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 400],
+      "id": "erp-query"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é um assistente de farmácia prestativo e profissional. Responda de forma clara, educada e objetiva. Use emojis com moderação. Sempre forneça informações precisas sobre produtos e preços."
+            },
+            {
+              "role": "user", 
+              "content": "={{$json.originalMessage}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Encontrei os seguintes produtos:\n{{$json.formattedProducts}}\n\nPosso ajudar com mais alguma coisa? 😊"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 300
+        }
+      },
+      "name": "Formatar Resposta AI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1050, 300],
+      "id": "format-ai-response"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "phoneNumberId": "={{$env.WHATSAPP_PHONE_ID}}",
+        "to": "={{$json.from}}",
+        "text": "={{$json.response}}",
+        "options": {
+          "preview_url": false
+        }
+      },
+      "name": "Enviar Resposta WhatsApp",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "id": "send-whatsapp"
+    },
+    {
+      "parameters": {
+        "content": "## FarmaBot Pro - Fluxo Principal\n\nEste workflow processa mensagens do WhatsApp e:\n1. Valida e extrai dados\n2. Identifica intenção (preço, estoque, pedido)\n3. Consulta dados (Supabase + ERP)\n4. Formata resposta com AI\n5. Envia resposta ao cliente\n\n### Configurações Necessárias:\n- WhatsApp Business API Token\n- Supabase Credentials\n- ERP API Credentials\n- OpenAI API Key",
+        "height": 400
+      },
+      "name": "Documentação",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [250, 50],
+      "id": "documentation"
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Processar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "É Consulta de Preço?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Consulta de Preço?": {
+      "main": [
+        [
+          {
+            "node": "Buscar no Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Consultar ERP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Formatar Resposta AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar ERP": {
+      "main": [
+        [
+          {
+            "node": "Formatar Resposta AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Resposta AI": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resposta WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "error-handler-workflow"
+  },
+  "staticData": null,
+  "meta": {
+    "templateId": "farmabot-main-v1"
+  },
+  "pinData": {},
+  "versionId": "1.0.0"
+} 

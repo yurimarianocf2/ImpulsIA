@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmacIA - Automatize sua Farmácia com IA 24/7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(45deg, #1e40af, #3b82f6, #60a5fa, #93c5fd);
+            background-size: 400% 400%;
+            animation: gradient-shift 8s ease infinite;
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .glow-button {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white overflow-x-hidden">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-pills text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Farmac<span class="text-purple-400">IA</span>
+                    </h1>
+                </div>
+                <a href="https://wa.me/5511999999999" target="_blank" 
+                   class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 glow-button">
+                    <i class="fab fa-whatsapp mr-2"></i>Falar Conosco
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background Animation -->
+        <div class="absolute inset-0 gradient-bg opacity-20"></div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full float-animation"></div>
+        <div class="absolute top-40 right-20 w-16 h-16 bg-purple-500/20 rounded-full float-animation" style="animation-delay: -2s;"></div>
+        <div class="absolute bottom-40 left-20 w-12 h-12 bg-green-500/20 rounded-full float-animation" style="animation-delay: -4s;"></div>
+        
+        <div class="container mx-auto px-6 text-center relative z-10 pt-20">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full text-sm font-medium glass-effect mb-6">
+                        🚀 Revolucione sua farmácia hoje mesmo
+                    </span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    <span class="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                        Automatize sua
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 bg-clip-text text-transparent bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite]">
+                        Farmácia com IA 24/7
+                    </span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+                    Aumente suas vendas em <span class="text-green-400 font-bold">300%</span> com IA avançada, 
+                    gestão inteligente de estoque e automação completa
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                    <a href="#pricing" 
+                       class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 glow-button">
+                        <i class="fas fa-rocket mr-2"></i>Começar Agora - R$ 300/mês
+                    </a>
+                    <a href="#como-funciona" 
+                       class="glass-effect px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/20 transition-all duration-300">
+                        <i class="fas fa-play mr-2"></i>Ver Como Funciona
+                    </a>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-400 mb-2">300%</div>
+                        <div class="text-sm text-gray-400">Aumento em Vendas</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-400 mb-2">24/7</div>
+                        <div class="text-sm text-gray-400">Atendimento</div>
+                            </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-400 mb-2">50+</div>
+                        <div class="text-sm text-gray-400">Farmácias Atendidas</div>
+                        </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">98%</div>
+                        <div class="text-sm text-gray-400">Satisfação</div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Como Funciona -->
+    <section id="como-funciona" class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Como Funciona
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Sistema completo de automação que transforma sua farmácia em uma máquina de vendas 24/7
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="glass-effect p-8 rounded-2xl mb-6 group-hover:scale-105 transition-all duration-300">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-green-400">1. IA Inteligente</h3>
+                        <p class="text-gray-300">
+                            Assistente com IA avançada que entende e responde perguntas sobre medicamentos, preços e disponibilidade 24/7
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="glass-effect p-8 rounded-2xl mb-6 group-hover:scale-105 transition-all duration-300">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-database text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-blue-400">2. Banco Seguro</h3>
+                        <p class="text-gray-300">
+                            Todos os dados protegidos em nuvem com backup automático e conformidade total com LGPD
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="glass-effect p-8 rounded-2xl mb-6 group-hover:scale-105 transition-all duration-300">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-motorcycle text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-purple-400">3. Delivery Automático</h3>
+                        <p class="text-gray-300">
+                            Sistema automatizado de entregas com rastreamento em tempo real e notificações para clientes
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="glass-effect p-8 rounded-2xl mb-6 group-hover:scale-105 transition-all duration-300">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">4. Gestão Completa</h3>
+                        <p class="text-gray-300">
+                            Dashboard completo com relatórios, controle de estoque, gestão de clientes e análise de vendas
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Funcionalidades -->
+    <section class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                        Funcionalidades Poderosas
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Tudo que sua farmácia precisa para dominar o mercado digital
+                </p>
+                </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Atendimento 24/7 -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-clock text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-green-400">IA Assistente 24/7</h3>
+                    <p class="text-gray-300 mb-6">
+                        Inteligência artificial que nunca dorme, atende clientes a qualquer hora, responde dúvidas sobre medicamentos e processa pedidos automaticamente.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Respostas instantâneas</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Processamento de pedidos</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Consulta de preços</li>
+                    </ul>
+                </div>
+
+                <!-- Gestão de Clientes -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-users text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-blue-400">Gestão de Clientes</h3>
+                    <p class="text-gray-300 mb-6">
+                        CRM completo que armazena histórico de compras, preferências e dados de contato para atendimento personalizado.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>Histórico completo</li>
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>Segmentação automática</li>
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>Marketing personalizado</li>
+                    </ul>
+                </div>
+
+                <!-- Delivery Inteligente -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-shipping-fast text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-purple-400">Delivery Inteligente</h3>
+                    <p class="text-gray-300 mb-6">
+                        Sistema automatizado de entregas com otimização de rotas, rastreamento em tempo real e notificações automáticas.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>Otimização de rotas</li>
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>Rastreamento em tempo real</li>
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>Notificações automáticas</li>
+                    </ul>
+                </div>
+
+                <!-- Integração ERP -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-plug text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Integração ERP</h3>
+                    <p class="text-gray-300 mb-6">
+                        Conecta automaticamente com seu sistema atual, sincronizando estoque, preços e produtos em tempo real.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Sincronização automática</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Compatível com principais ERPs</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Atualização em tempo real</li>
+                    </ul>
+                </div>
+
+                <!-- Dashboard Completo -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-chart-pie text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-red-400">Dashboard Completo</h3>
+                    <p class="text-gray-300 mb-6">
+                        Painel de controle com métricas em tempo real, relatórios detalhados e insights para tomada de decisões.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-red-400 mr-2"></i>Métricas em tempo real</li>
+                        <li><i class="fas fa-check text-red-400 mr-2"></i>Relatórios automáticos</li>
+                        <li><i class="fas fa-check text-red-400 mr-2"></i>Análise de performance</li>
+                    </ul>
+                </div>
+
+                <!-- Segurança LGPD -->
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300 group">
+                    <div class="w-16 h-16 mb-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-teal-400">Segurança LGPD</h3>
+                    <p class="text-gray-300 mb-6">
+                        Proteção total dos dados dos clientes com criptografia avançada e conformidade completa com LGPD.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-teal-400 mr-2"></i>Criptografia de ponta</li>
+                        <li><i class="fas fa-check text-teal-400 mr-2"></i>Conformidade LGPD</li>
+                        <li><i class="fas fa-check text-teal-400 mr-2"></i>Backup automático</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                        Preço Especial para Pequenas Farmácias
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Invista menos que o salário de um funcionário e tenha um sistema completo 24/7
+                </p>
+            </div>
+
+            <div class="max-w-lg mx-auto">
+                <div class="glass-effect p-8 rounded-3xl border-2 border-green-500/50 relative overflow-hidden group hover:scale-105 transition-all duration-300">
+                    <!-- Glow effect -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 animate-pulse"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="text-center mb-8">
+                            <div class="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 rounded-full text-sm font-bold mb-4">
+                                🔥 PROMOÇÃO LIMITADA
+                            </div>
+                            <h3 class="text-3xl font-bold mb-4 text-white">FarmacIA Completo</h3>
+                            <div class="mb-4">
+                                <span class="text-gray-400 line-through text-2xl">R$ 500/mês</span>
+                                <div class="text-5xl font-bold text-green-400 mb-2">R$ 300<span class="text-2xl text-gray-300">/mês</span></div>
+                                <p class="text-green-400 font-semibold">Economize R$ 200 por mês!</p>
+                </div>
+                        </div>
+
+                        <div class="space-y-4 mb-8">
+                                                         <div class="flex items-center space-x-3">
+                                 <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                 <span class="text-white">IA Assistente 24/7 Avançada</span>
+                             </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Sistema de Delivery Completo</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Gestão de Clientes e Estoque</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Dashboard com Relatórios</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Integração com ERP</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Suporte Técnico Completo</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                                <span class="text-white">Conformidade LGPD</span>
+                        </div>
+                        </div>
+
+                        <div class="text-center">
+                                                            <a href="https://wa.me/5511999999999?text=Quero%20contratar%20o%20FarmacIA%20por%20R%24300/mês" 
+                                   target="_blank"
+                                   class="block w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 py-4 rounded-2xl text-xl font-bold transition-all duration-300 transform hover:scale-105 glow-button">
+                                    <i class="fab fa-whatsapp mr-2"></i>Contratar Agora - R$ 300/mês
+                                </a>
+                            <p class="text-sm text-gray-400 mt-4">
+                                🔒 Sem taxa de implantação • Sem fidelidade • Cancele quando quiser
+                            </p>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    <!-- Depoimentos -->
+    <section class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                        O que Nossos Clientes Dizem
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-300">
+                    Resultados reais de farmácias que transformaram seus negócios
+                </p>
+                </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">MS</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">Maria Silva</h4>
+                            <p class="text-gray-400 text-sm">Farmácia São João</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Minhas vendas aumentaram 280% em 3 meses! O bot atende os clientes mesmo quando estou fechada. Melhor investimento que já fiz!"
+                    </p>
+                </div>
+
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">JS</span>
+                            </div>
+                        <div>
+                            <h4 class="font-bold text-white">João Santos</h4>
+                            <p class="text-gray-400 text-sm">Drogaria Central</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Sistema incrível! Automatizou tudo: pedidos, entregas, estoque. Agora posso focar em crescer o negócio. Recomendo 100%!"
+                    </p>
+                </div>
+
+                <div class="glass-effect p-8 rounded-2xl hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">AC</span>
+                            </div>
+                        <div>
+                            <h4 class="font-bold text-white">Ana Costa</h4>
+                            <p class="text-gray-400 text-sm">Farmácia Vida</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Revolucionou minha farmácia! Clientes adoram o atendimento rápido no WhatsApp. Vendas online dispararam!"
+                    </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- FAQ -->
+    <section class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                        Dúvidas Frequentes
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-300">
+                    Tudo que você precisa saber sobre o FarmaBot Pro
+                </p>
+            </div>
+
+            <div class="max-w-3xl mx-auto space-y-4" x-data="{ openFaq: null }">
+                <div class="glass-effect rounded-2xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 1 ? null : 1" 
+                            class="w-full p-6 text-left hover:bg-white/5 transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-white">Como funciona o atendimento 24/7?</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300"
+                               :class="{ 'rotate-180': openFaq === 1 }"></i>
+                        </div>
+                        </button>
+                    <div x-show="openFaq === 1" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-300">
+                            Nosso bot inteligente com IA está sempre ativo no WhatsApp da sua farmácia, respondendo perguntas sobre medicamentos, verificando preços, processando pedidos e agendando entregas automaticamente, mesmo quando você está dormindo ou de férias.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 2 ? null : 2" 
+                            class="w-full p-6 text-left hover:bg-white/5 transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-white">Preciso de conhecimento técnico para usar?</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300"
+                               :class="{ 'rotate-180': openFaq === 2 }"></i>
+                        </div>
+                    </button>
+                    <div x-show="openFaq === 2" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-300">
+                            Não! O sistema é super simples de usar. Fazemos toda a configuração inicial e treinamos você e sua equipe. O painel é intuitivo como usar WhatsApp. Oferecemos suporte completo sempre que precisar.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 3 ? null : 3" 
+                            class="w-full p-6 text-left hover:bg-white/5 transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-white">Quanto tempo para implementar?</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300"
+                               :class="{ 'rotate-180': openFaq === 3 }"></i>
+                        </div>
+                    </button>
+                    <div x-show="openFaq === 3" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-300">
+                            Em apenas 48 horas seu sistema estará funcionando! Fazemos toda configuração, integração com seu estoque atual, treinamento da equipe e testes. Você pode começar a vender no WhatsApp no mesmo dia.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 4 ? null : 4" 
+                            class="w-full p-6 text-left hover:bg-white/5 transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-white">E se eu não gostar do sistema?</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300"
+                               :class="{ 'rotate-180': openFaq === 4 }"></i>
+                        </div>
+                    </button>
+                    <div x-show="openFaq === 4" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-300">
+                            Sem problemas! Não temos fidelidade. Você pode cancelar quando quiser sem multas ou taxas. Mas garantimos que em 30 dias você verá resultados incríveis nas suas vendas.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 5 ? null : 5" 
+                            class="w-full p-6 text-left hover:bg-white/5 transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-white">Os dados dos clientes ficam seguros?</h3>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300"
+                               :class="{ 'rotate-180': openFaq === 5 }"></i>
+                        </div>
+                    </button>
+                    <div x-show="openFaq === 5" x-collapse class="px-6 pb-6">
+                        <p class="text-gray-300">
+                            Absolutamente! Usamos criptografia de nível bancário e somos 100% conformes com a LGPD. Todos os dados ficam em servidores seguros no Brasil com backup automático diário. Sua farmácia e clientes estão totalmente protegidos.
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- CTA Final -->
+    <section class="py-20 relative">
+        <div class="absolute inset-0 gradient-bg opacity-30"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-6xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                        Pronto para Revolucionar
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                        sua Farmácia?
+                    </span>
+                </h2>
+                
+                <p class="text-xl md:text-2xl text-gray-300 mb-8">
+                    Junte-se às 50+ farmácias que já aumentaram suas vendas em <span class="text-green-400 font-bold">300%</span> com IA
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                    <a href="https://wa.me/5511999999999?text=Quero%20contratar%20o%20FarmacIA%20agora!" 
+                       target="_blank"
+                       class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-8 py-4 rounded-full text-xl font-bold transition-all duration-300 transform hover:scale-105 glow-button">
+                        <i class="fab fa-whatsapp mr-2"></i>Começar Agora - R$ 300/mês
+                    </a>
+                    <a href="mailto:contato@farmabot.pro" 
+                       class="glass-effect px-8 py-4 rounded-full text-xl font-semibold hover:bg-white/20 transition-all duration-300">
+                        <i class="fas fa-envelope mr-2"></i>Ou envie um E-mail
+                    </a>
+                </div>
+                
+                <div class="flex items-center justify-center space-x-8 text-sm text-gray-400">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-shield-alt text-green-400"></i>
+                        <span>100% Seguro</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-clock text-blue-400"></i>
+                        <span>Implementação em 48h</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-headset text-purple-400"></i>
+                        <span>Suporte Completo</span>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-pills text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                            Farmac<span class="text-purple-400">IA</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm">Automatize sua farmácia</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <a href="https://wa.me/5511999999999" target="_blank" 
+                       class="text-gray-400 hover:text-green-400 transition-colors duration-300">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                    </a>
+                    <a href="mailto:contato@farmabot.pro" 
+                       class="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                        <i class="fas fa-envelope text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    © 2024 FarmacIA. Todos os direitos reservados. | 
+                    <span class="text-green-400">CNPJ: 00.000.000/0001-00</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,255 @@
+{
+  "name": "FarmaBot IA - Chat Inteligente V2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-ai",
+        "responseMode": "onReceived"
+      },
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "farmabot-ai"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extrair dados da mensagem WhatsApp\nconst data = $input.first().json;\n\n// Formato padrão do WhatsApp Business API\nconst telefone = data.from || data.phone || '5511999999999';\nconst mensagem = data.text?.body || data.message || data.text || '';\nconst nomeContato = data.profile?.name || data.name || 'Cliente';\nconst timestamp = data.timestamp || new Date().toISOString();\n\nconsole.log('📱 Mensagem recebida:', {\n  telefone,\n  mensagem,\n  nomeContato,\n  timestamp\n});\n\nreturn {\n  telefone: telefone.replace(/\\D/g, ''), // Limpar número\n  mensagem: mensagem.trim(),\n  nomeContato,\n  timestamp,\n  conversaId: `conv_${telefone.replace(/\\D/g, '')}_${Date.now()}`\n};"
+      },
+      "name": "Processar WhatsApp",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "https://fcdfunvzoxhobfskwsag.supabase.co/rest/v1/clientes",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "telefone",
+              "value": "=eq.{{$json.telefone}}"
+            },
+            {
+              "name": "select",
+              "value": "id,nome,telefone,email,total_pedidos,valor_total_gasto,segmento,ultimo_pedido_at,ativo"
+            }
+          ]
+        },
+        "options": {},
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZGZ1bnZ6b3hob2Jmc2t3c2FnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDM2NjgzNywiZXhwIjoyMDY1OTQyODM3fQ.NWuWMHMM_VCyeiEl8NPRxCg3I9gx7owyKy3nHprrskQ"
+        }
+      },
+      "name": "Buscar Cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "https://fcdfunvzoxhobfskwsag.supabase.co/rest/v1/produtos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,nome,nome_generico,laboratorio,dosagem,apresentacao,preco_venda,estoque_atual,categoria,subcategoria,principio_ativo,indicacoes,tags"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "order",
+              "value": "preco_venda.asc"
+            }
+          ]
+        },
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZGZ1bnZ6b3hob2Jmc2t3c2FnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDM2NjgzNywiZXhwIjoyMDY1OTQyODM3fQ.NWuWMHMM_VCyeiEl8NPRxCg3I9gx7owyKy3nHprrskQ"
+        }
+      },
+      "name": "Buscar Produtos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [640, 120]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "system",
+              "content": "=Você é **FarmaBot**, assistente virtual inteligente da **Farmácia São João**.\\n\\n🤖 **PERSONALIDADE:**\\n- Empático, profissional e acolhedor\\n- Especialista em produtos farmacêuticos\\n- Comunicação clara e objetiva\\n- SEGURANÇA DO PACIENTE é prioridade absoluta\\n\\n💊 **SUAS FUNÇÕES PRINCIPAIS:**\\n1. 🔍 **CONSULTAR PREÇOS E ESTOQUE** em tempo real\\n2. 📋 **ORIENTAÇÕES SOBRE MEDICAMENTOS** (bula, indicações)\\n3. 🛒 **PROCESSAR RESERVAS E PEDIDOS**\\n4. 📞 **TRANSFERIR PARA FARMACÊUTICO** quando necessário\\n5. 🏥 **COMPARAR PREÇOS** com outras farmácias\\n\\n👤 **CONTEXTO DO CLIENTE ATUAL:**\\n{{$('Buscar Cliente').first().json.length > 0 ? `👋 **Cliente:** ${$('Buscar Cliente').first().json[0].nome || 'Não identificado'}\\n📱 **Telefone:** ${$('Buscar Cliente').first().json[0].telefone}\\n📊 **Histórico:** ${$('Buscar Cliente').first().json[0].total_pedidos || 0} pedidos anteriores\\n🏷️ **Perfil:** ${$('Buscar Cliente').first().json[0].segmento || 'Novo cliente'}\\n🛒 **Última compra:** ${$('Buscar Cliente').first().json[0].ultimo_pedido_at || 'Primeira visita'}` : '🆕 **Cliente novo** - Primeira interação na Farmácia São João'}}\\n\\n💊 **PRODUTOS EM ESTOQUE (Base Real Supabase):**\\n{{$('Buscar Produtos').first().json.map(produto => `• ${produto.nome} ${produto.dosagem} (${produto.apresentacao}) - **R$ ${produto.preco_venda}** ${produto.estoque_atual > 10 ? '✅' : produto.estoque_atual > 0 ? '⚠️' : '❌'} ${produto.estoque_atual} unid`).join('\\n')}}\\n\\n⚠️ **REGRAS RÍGIDAS DE SEGURANÇA:**\\n- 🚫 **MEDICAMENTOS CONTROLADOS**: SEMPRE exigir receita médica válida\\n- 🚫 **NUNCA dê conselhos médicos** - apenas informações do produto\\n- 📞 **SEMPRE transfira para farmacêutico** em dúvidas técnicas\\n- 💰 **SEMPRE mencione preços atualizados** da base de dados\\n- 📊 **SEMPRE verifique estoque** antes de confirmar\\n\\n📝 **FORMATO DE RESPOSTA OBRIGATÓRIO:**\\n1. 👋 Saudação personalizada (se cliente conhecido)\\n2. 🔍 Resultados da consulta com preços reais\\n3. 📊 Comparação com concorrentes (estimativa +15-20%)\\n4. 💡 Próximas ações claras (reservar, falar com farmacêutico, etc.)\\n5. 🎯 Sempre termine perguntando como mais pode ajudar"
+            },
+            {
+              "role": "user", 
+              "content": "={{$('Processar WhatsApp').first().json.mensagem}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "ChatGPT - IA Farmácia",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1040, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI GPT-4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Processar resposta da IA e detectar intenções\nconst respostaIA = $('ChatGPT - IA Farmácia').first().json.message?.content || $('ChatGPT - IA Farmácia').first().json.text || '';\nconst dadosCliente = $('Processar WhatsApp').first().json;\nconst cliente = $('Buscar Cliente').first().json[0] || null;\nconst produtos = $('Buscar Produtos').first().json || [];\n\n// Detectar se é consulta de preço\nconst isConsultaPreco = /preço|quanto custa|valor|custo/i.test(dadosCliente.mensagem);\n\n// Detectar produtos mencionados\nconst produtosMencionados = [];\nconst produtosBase = ['dipirona', 'paracetamol', 'ibuprofeno', 'omeprazol', 'pantoprazol', 'amoxicilina', 'azitromicina', 'vitamina', 'complexo b', 'metformina'];\n\nprodutosBase.forEach(produto => {\n  if (dadosCliente.mensagem.toLowerCase().includes(produto)) {\n    produtosMencionados.push(produto);\n  }\n});\n\n// Enriquecer resposta se for consulta de preço\nlet respostaFinal = respostaIA;\n\nif (isConsultaPreco && produtosMencionados.length > 0) {\n  respostaFinal += `\\n\\n📋 *AÇÕES DISPONÍVEIS:*\\n1️⃣ Reservar produto\\n2️⃣ Ver bula/informações\\n3️⃣ Falar com farmacêutico\\n4️⃣ Ver produtos similares\\n\\n💬 Digite o número da opção ou me diga como posso ajudar!`;\n}\n\n// Adicionar saudação personalizada para clientes conhecidos\nif (cliente && cliente.nome) {\n  respostaFinal = `Olá ${cliente.nome}! 😊\\n\\n` + respostaFinal;\n} else if (!cliente) {\n  respostaFinal = `Olá! Bem-vindo à Farmácia São João! 👋\\n\\n` + respostaFinal;\n}\n\n// Adicionar informações de estoque baixo se relevante\nconst produtosBaixoEstoque = produtos.filter(p => p.estoque_atual <= 5);\nif (produtosBaixoEstoque.length > 0 && isConsultaPreco) {\n  respostaFinal += `\\n\\n⚠️ *ATENÇÃO - Estoque limitado:*\\n${produtosBaixoEstoque.map(p => `• ${p.nome} - Apenas ${p.estoque_atual} unidades`).join('\\n')}`;\n}\n\nconsole.log('🤖 Resposta processada:', {\n  cliente: cliente?.nome || 'Novo',\n  isConsultaPreco,\n  produtosMencionados,\n  tamanhoResposta: respostaFinal.length,\n  produtosBaixoEstoque: produtosBaixoEstoque.length\n});\n\nreturn {\n  telefone: dadosCliente.telefone,\n  resposta: respostaFinal,\n  isConsultaPreco,\n  produtosMencionados,\n  cliente: cliente,\n  produtosBaixoEstoque,\n  metadata: {\n    timestamp: new Date().toISOString(),\n    modelo: 'gpt-4',\n    tokens: respostaIA.length,\n    intent: isConsultaPreco ? 'consulta_preco' : 'conversa_geral',\n    produtos_encontrados: produtos.length\n  }\n};"
+      },
+      "name": "Processar Resposta IA",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fcdfunvzoxhobfskwsag.supabase.co/rest/v1/mensagens",
+        "authentication": "headerAuth",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"conversa_id\": \"{{$('Processar WhatsApp').first().json.conversaId}}\",\n  \"tipo\": \"recebida\",\n  \"conteudo\": \"{{$('Processar WhatsApp').first().json.mensagem}}\",\n  \"intent\": \"{{$json.metadata.intent}}\",\n  \"processed\": true,\n  \"metadata\": {{JSON.stringify($json.metadata)}}\n}",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZGZ1bnZ6b3hob2Jmc2t3c2FnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDM2NjgzNywiZXhwIjoyMDY1OTQyODM3fQ.NWuWMHMM_VCyeiEl8NPRxCg3I9gx7owyKy3nHprrskQ"
+        },
+        "options": {}
+      },
+      "name": "Salvar Mensagem Recebida",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1440, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fcdfunvzoxhobfskwsag.supabase.co/rest/v1/mensagens",
+        "authentication": "headerAuth",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"conversa_id\": \"{{$('Processar WhatsApp').first().json.conversaId}}\",\n  \"tipo\": \"enviada\",\n  \"conteudo\": \"{{$json.resposta}}\",\n  \"resposta_automatica\": true,\n  \"processed\": true,\n  \"metadata\": {{JSON.stringify($json.metadata)}}\n}",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZGZ1bnZ6b3hob2Jmc2t3c2FnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDM2NjgzNywiZXhwIjoyMDY1OTQyODM3fQ.NWuWMHMM_VCyeiEl8NPRxCg3I9gx7owyKy3nHprrskQ"
+        },
+        "options": {}
+      },
+      "name": "Salvar Resposta Enviada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1440, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Preparar resposta final para WhatsApp\nconst dados = $input.first().json;\n\n// Limitar tamanho da mensagem (WhatsApp tem limite)\nlet resposta = dados.resposta;\nif (resposta.length > 4000) {\n  resposta = resposta.substring(0, 3900) + '...\\n\\n💬 Resposta muito longa! Digite \"mais info\" para continuar.';\n}\n\n// Adicionar assinatura da farmácia\nresposta += '\\n\\n---\\n🏥 *Farmácia São João*\\n📱 Atendimento 24h via WhatsApp\\n📍 Sempre os melhores preços!';\n\nconsole.log('✅ Resposta final preparada:', {\n  telefone: dados.telefone,\n  tamanho: resposta.length,\n  intent: dados.metadata?.intent,\n  produtos_mencionados: dados.produtosMencionados?.length || 0\n});\n\nreturn {\n  to: dados.telefone,\n  message: resposta,\n  success: true,\n  timestamp: new Date().toISOString(),\n  intent: dados.metadata?.intent,\n  produtos_encontrados: dados.metadata?.produtos_encontrados\n};"
+      },
+      "name": "Preparar Resposta Final",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1640, 300]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Processar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Buscar Cliente",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar Produtos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Cliente": {
+      "main": [
+        [
+          {
+            "node": "ChatGPT - IA Farmácia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Produtos": {
+      "main": [
+        [
+          {
+            "node": "ChatGPT - IA Farmácia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ChatGPT - IA Farmácia": {
+      "main": [
+        [
+          {
+            "node": "Processar Resposta IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar Resposta IA": {
+      "main": [
+        [
+          {
+            "node": "Salvar Mensagem Recebida",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Salvar Resposta Enviada",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar Resposta Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
