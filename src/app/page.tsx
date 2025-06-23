@@ -15,17 +15,16 @@ import {
   Tag,
   Percent
 } from 'lucide-react';
+import { PriceAnalyzer } from '@/components/price-analyzer-component';
 
 export default function Dashboard() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [priceAnalysis, setPriceAnalysis] = useState({
-    productName: '',
-    myPrice: '',
-    competitorPrice: '',
-    purchasePrice: ''
-  });
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  
+  // Configuração padrão para a farmácia
+  const farmaciaId = process.env.NEXT_PUBLIC_FARMACIA_ID || 'demo-farmacia-id';
 
   useEffect(() => {
+    setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -92,29 +91,6 @@ export default function Dashboard() {
     }
   ];
 
-  const calculatePriceAnalysis = () => {
-    const myPriceNum = parseFloat(priceAnalysis.myPrice.replace(',', '.'));
-    const marketAverage = 8.78; // Preço médio do mercado
-    const purchasePriceNum = parseFloat(priceAnalysis.purchasePrice.replace(',', '.'));
-
-    if (isNaN(myPriceNum) || isNaN(purchasePriceNum)) {
-      return null;
-    }
-
-    const profit = myPriceNum - purchasePriceNum;
-    const profitMargin = (profit / myPriceNum) * 100;
-    const competitorDiff = ((myPriceNum - marketAverage) / marketAverage) * 100;
-
-    return {
-      profit: profit.toFixed(2),
-      profitMargin: profitMargin.toFixed(1),
-      competitorDiff: competitorDiff.toFixed(1),
-      recommendation: competitorDiff > 10 ? 'Preço acima do mercado' : 
-                     competitorDiff < -10 ? 'Preço muito baixo' : 'Preço competitivo'
-    };
-  };
-
-  const analysis = calculatePriceAnalysis();
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -129,8 +105,17 @@ export default function Dashboard() {
               Farmac<span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">IA</span>
             </h1>
           </div>
-          <div className="text-sm text-gray-400">
-            {currentTime.toLocaleString('pt-BR')}
+          <div className="flex items-center space-x-4">
+            <a 
+              href="/upload-produtos"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+            >
+              <Package className="w-4 h-4" />
+              <span>Upload Produtos</span>
+            </a>
+            <div className="text-sm text-gray-400">
+              {currentTime?.toLocaleString('pt-BR') || '--:--:--'}
+            </div>
           </div>
         </div>
       </header>
@@ -213,157 +198,8 @@ export default function Dashboard() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800"
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Calculator className="w-5 h-5 text-blue-500 mr-2" />
-              Analisador de Preços
-            </h3>
-            
-            {/* Pesquisa de Produto */}
-            <div className="mb-6">
-              <label className="text-xs text-gray-400 block mb-1">Pesquisar Produto</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 pr-10"
-                  placeholder="Digite o nome do produto..."
-                  value={priceAnalysis.productName}
-                  onChange={(e) => setPriceAnalysis({...priceAnalysis, productName: e.target.value})}
-                />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Preços dos Concorrentes */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium mb-3 text-gray-300">Preços no Mercado</h4>
-              <div className="space-y-2">
-                {[
-                  { name: 'Farmácia Popular', price: 'R$ 8,50', distance: '0.5km', status: 'online' },
-                  { name: 'Drogaria São Paulo', price: 'R$ 9,20', distance: '1.2km', status: 'online' },
-                  { name: 'Farmácia do Trabalhador', price: 'R$ 7,90', distance: '2.0km', status: 'offline' },
-                  { name: 'Drogasil', price: 'R$ 9,50', distance: '1.8km', status: 'online' }
-                ].map((competitor, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-all">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-2 h-2 rounded-full ${competitor.status === 'online' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-                      <div>
-                        <p className="text-sm font-medium">{competitor.name}</p>
-                        <p className="text-xs text-gray-500">{competitor.distance}</p>
-                      </div>
-                    </div>
-                    <span className="text-sm font-bold text-blue-400">{competitor.price}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                <p className="text-xs text-yellow-400 flex items-center">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  Preço médio do mercado: <span className="font-bold ml-1">R$ 8,78</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Calculadora de Preços */}
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-300">Calcular Meu Preço</h4>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-gray-400 block mb-1">Meu Preço</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="R$ 0,00"
-                    value={priceAnalysis.myPrice}
-                    onChange={(e) => setPriceAnalysis({...priceAnalysis, myPrice: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400 block mb-1">Preço Médio</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm"
-                    placeholder="R$ 8,78"
-                    value="R$ 8,78"
-                    disabled
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400 block mb-1">Custo</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="R$ 0,00"
-                    value={priceAnalysis.purchasePrice}
-                    onChange={(e) => setPriceAnalysis({...priceAnalysis, purchasePrice: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              {analysis && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-4 bg-gray-800/50 rounded-lg"
-                >
-                  <h4 className="text-sm font-semibold mb-3 flex items-center">
-                    <DollarSign className="w-4 h-4 mr-1" />
-                    Análise Competitiva
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Lucro por unidade:</span>
-                      <span className="text-green-400 font-medium">R$ {analysis.profit}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Margem de lucro:</span>
-                      <span className="text-blue-400 font-medium">{analysis.profitMargin}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Vs. Média do Mercado:</span>
-                      <span className={`font-medium ${
-                        parseFloat(analysis.competitorDiff) > 10 ? 'text-red-400' :
-                        parseFloat(analysis.competitorDiff) < -10 ? 'text-yellow-400' : 'text-green-400'
-                      }`}>
-                        {parseFloat(analysis.competitorDiff) > 0 ? '+' : ''}{analysis.competitorDiff}%
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Gráfico Visual de Comparação */}
-                  <div className="mt-4 space-y-2">
-                    <div className="text-xs text-gray-400">Posição no Mercado</div>
-                    <div className="relative h-8 bg-gray-700 rounded-full overflow-hidden">
-                      <div className="absolute inset-y-0 left-0 w-1/4 bg-red-500/20 border-r border-red-500"></div>
-                      <div className="absolute inset-y-0 left-1/4 w-1/2 bg-green-500/20 border-r border-green-500"></div>
-                      <div className="absolute inset-y-0 right-0 w-1/4 bg-yellow-500/20"></div>
-                      <div 
-                        className="absolute top-1/2 -translate-y-1/2 w-1 h-6 bg-white"
-                        style={{ left: '45%' }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Muito Barato</span>
-                      <span className="text-green-400">Ideal</span>
-                      <span>Muito Caro</span>
-                    </div>
-                  </div>
-
-                  <div className={`mt-3 p-2 rounded text-xs text-center font-medium ${
-                    analysis.recommendation === 'Preço competitivo' ? 'bg-green-500/20 text-green-400' :
-                    analysis.recommendation === 'Preço acima do mercado' ? 'bg-red-500/20 text-red-400' :
-                    'bg-yellow-500/20 text-yellow-400'
-                  }`}>
-                    {analysis.recommendation}
-                  </div>
-                </motion.div>
-              )}
-            </div>
+            <PriceAnalyzer farmaciaId={farmaciaId} />
           </motion.div>
         </div>
 
