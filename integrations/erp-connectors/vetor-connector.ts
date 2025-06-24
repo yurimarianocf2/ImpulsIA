@@ -135,7 +135,7 @@ export class VetorFarmaConnector extends BaseERPConnector {
         totalRecords: 0,
         syncedRecords: 0,
         errors: [{
-          error: error.toString(),
+          error: error instanceof Error ? error.message : String(error),
           timestamp: new Date()
         }],
         duration: Date.now() - startTime

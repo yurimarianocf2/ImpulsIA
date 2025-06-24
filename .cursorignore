@@ -1,0 +1,31 @@
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+server.log
+
+# Cache
+.cache/
+tsconfig.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/settings.json
+.vscode/launch.json
+
+# IMPORTANT: Do NOT ignore these files - they need AI access
+# .env.local - contains development environment variables
+# .env.local.backup - backup of environment variables
+# components.json - UI component configuration
+# CLAUDE.md - AI assistant instructions
+# docs/ - documentation that AI needs to reference

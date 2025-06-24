@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Search, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Loader2, Search, TrendingUp, TrendingDown, Minus, RefreshCw, Database, Globe } from 'lucide-react'
 
 interface PriceAnalysisResult {
   produto_local: {
@@ -35,6 +35,7 @@ export function PriceAnalyzer() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PriceAnalysisResult | null>(null)
   const [error, setError] = useState('')
+  const [useMockData, setUseMockData] = useState(process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true')
 
   const handleAnalyze = async () => {
     if (!medicamento.trim()) {
@@ -55,7 +56,8 @@ export function PriceAnalyzer() {
         body: JSON.stringify({
           farmacia_id: farmaciaId,
           medicamento: medicamento.trim(),
-          estado
+          estado,
+          useMockData
         })
       })
 
@@ -70,6 +72,48 @@ export function PriceAnalyzer() {
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleClearCache = async () => {
+    try {
+      const response = await fetch('/api/price-analysis/clear-cache', {
+        method: 'POST'
+      })
+      if (response.ok) {
+        alert('Cache limpo com sucesso!')
+      }
+    } catch (err) {
+      console.error('Erro ao limpar cache:', err)
+    }
+  }
+
+  const toggleMockData = () => {
+    setUseMockData(!useMockData)
+  }
+
+  const getSourceIcon = (fonte: string) => {
+    switch (fonte) {
+      case 'exa_search':
+        return <Globe className="h-4 w-4 text-purple-600" />
+      case 'consultaremedios':
+      case 'cliquefarma':
+        return <Globe className="h-4 w-4 text-blue-600" />
+      default:
+        return <Database className="h-4 w-4 text-gray-600" />
+    }
+  }
+
+  const getSourceBadge = (fonte: string) => {
+    switch (fonte) {
+      case 'exa_search':
+        return <Badge variant="outline" className="text-xs">EXA Search</Badge>
+      case 'consultaremedios':
+        return <Badge variant="outline" className="text-xs">API Real</Badge>
+      case 'cliquefarma':
+        return <Badge variant="outline" className="text-xs">API Real</Badge>
+      default:
+        return <Badge variant="secondary" className="text-xs">Dados Demo</Badge>
     }
   }
 
@@ -155,6 +199,32 @@ export function PriceAnalyzer() {
                 </>
               )}
             </Button>
+          </div>
+
+          {/* Controles adicionais */}
+          <div className="flex gap-2 pt-2 border-t">
+            <Button variant="outline" size="sm" onClick={handleClearCache}>
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Limpar Cache
+            </Button>
+            <Button variant="outline" size="sm" onClick={toggleMockData}>
+              {useMockData ? <Globe className="h-4 w-4 mr-1" /> : <Database className="h-4 w-4 mr-1" />}
+              {useMockData ? 'Usar APIs Reais' : 'Usar Dados Demo'}
+            </Button>
+            <div className="flex items-center gap-2 ml-auto">
+              <span className="text-sm text-gray-600">Fonte atual:</span>
+              {useMockData ? (
+                <Badge variant="secondary" className="text-xs">
+                  <Database className="h-3 w-3 mr-1" />
+                  Dados Demo
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-xs">
+                  <Globe className="h-3 w-3 mr-1" />
+                  APIs Reais
+                </Badge>
+              )}
+            </div>
           </div>
 
           {error && (
@@ -252,15 +322,23 @@ export function PriceAnalyzer() {
               <div className="space-y-2">
                 {result.precos_externos.map((preco, index) => (
                   <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium">{preco.farmacia}</p>
-                      <p className="text-sm text-gray-600">Fonte: {preco.fonte}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium">{preco.farmacia}</p>
+                        {getSourceIcon(preco.fonte)}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-gray-600">Fonte: {preco.fonte}</p>
+                        {getSourceBadge(preco.fonte)}
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">R$ {preco.preco.toFixed(2)}</p>
-                      <Badge variant={preco.disponivel ? 'default' : 'secondary'}>
-                        {preco.disponivel ? 'Disponível' : 'Indisponível'}
-                      </Badge>
+                      <p className="font-semibold text-lg">R$ {preco.preco.toFixed(2)}</p>
+                      <div className="flex gap-1 justify-end">
+                        <Badge variant={preco.disponivel ? 'default' : 'secondary'} className="text-xs">
+                          {preco.disponivel ? 'Disponível' : 'Indisponível'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 ))}

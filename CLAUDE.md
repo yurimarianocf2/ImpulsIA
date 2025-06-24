@@ -30,72 +30,74 @@ graph TB
         WH[Webhooks]
     end
     
-    subgraph "Orquestração"
-        N8N[n8n Workflows]
-        Q[Queue System]
+    subgraph "Aplicação Next.js"
+        UI[Dashboard Interface]
+        API[API Routes]
+        PA[Price Analyzer]
+        CU[CSV Uploader]
     end
     
-    subgraph "Backend Services"
-        API[API Gateway]
-        AS[Auth Service]
-        PS[Product Service]
-        CS[Chat Service]
-        IS[Integration Service]
+    subgraph "Orquestração"
+        N8N[n8n Workflows]
     end
     
     subgraph "Data Layer"
         SB[(Supabase)]
-        RD[(Redis Cache)]
-        S3[Object Storage]
+        RD[(Redis - via Docker)]
     end
     
     subgraph "External Services"
-        ERP[ERPs Farmácia]
-        ANVISA[ANVISA API]
-        CF[CliqueFarma]
+        EXA[Exa API]
+        ERP[ERP Connectors]
     end
     
     WA <--> WAPI
     WAPI --> WH
     WH --> N8N
-    N8N <--> Q
     N8N <--> API
-    API <--> AS & PS & CS & IS
-    AS & PS & CS & IS <--> SB
-    PS <--> RD
-    IS <--> ERP & ANVISA & CF
-    CS --> S3
+    UI <--> API
+    API <--> SB
+    PA --> EXA
+    ERP --> SB
+    N8N <--> RD
 ```
 
 ## 📁 Estrutura do Projeto
 
 ```
 farmabot-pro/
-├── apps/
-│   ├── api/                    # Backend API (NestJS)
-│   ├── dashboard/              # Frontend Dashboard (Next.js 14)
-│   ├── mobile/                 # Mobile App (React Native)
-│   └── chatbot/                # Chatbot Logic
-├── packages/
-│   ├── shared/                 # Shared types & utilities
-│   ├── ui/                     # Design system components
-│   └── database/               # Database schemas & migrations
-├── infrastructure/
-│   ├── docker/                 # Docker configurations
-│   ├── k8s/                    # Kubernetes manifests
-│   └── terraform/              # Infrastructure as Code
-├── n8n/
-│   ├── workflows/              # n8n workflow definitions
-│   ├── nodes/                  # Custom n8n nodes
-│   └── credentials/            # Credential templates
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/               # API routes
+│   │   │   ├── price-analysis/ # Price analysis endpoints
+│   │   │   └── mcp-proxy/     # MCP proxy endpoints
+│   │   ├── upload-produtos/   # Product upload page
+│   │   └── test/              # Test pages
+│   ├── components/
+│   │   ├── ui/                # shadcn/ui components
+│   │   ├── upload/            # CSV upload components
+│   │   └── price-analyzer-component.tsx
+│   ├── lib/
+│   │   ├── external-price-apis.ts
+│   │   ├── price-analyzer.ts
+│   │   └── utils.ts
+│   └── hooks/                 # Custom React hooks
 ├── docs/
-│   ├── agents/                 # Agent documentation
-│   ├── api/                    # API documentation
-│   └── guides/                 # User guides
-└── tests/
-    ├── e2e/                    # End-to-end tests
-    ├── integration/            # Integration tests
-    └── unit/                   # Unit tests
+│   ├── agents/                # Agent documentation
+│   │   ├── agent-backend.md
+│   │   ├── agent-frontend.md
+│   │   ├── agent-n8n.md
+│   │   ├── agent-ux-ui.md
+│   │   ├── agent-devops.md
+│   │   └── agent-security.md
+│   └── archive/               # Archived documentation
+├── integrations/
+│   └── erp-connectors/        # ERP integration connectors
+├── n8n-workflows/             # n8n workflow JSON files
+├── database/                  # Database scripts and schemas
+├── config/                    # Configuration files
+├── ai-prompts/               # AI prompt templates
+└── scripts/                  # Utility scripts
 ```
 
 ## 🤖 Sistema de Agentes Especializados
@@ -103,12 +105,12 @@ farmabot-pro/
 ### Hierarquia de Agentes
 1. **Master Agent** - Coordena todos os outros agentes
 2. **Domain Agents** - Especialistas em áreas específicas
-   - `agent-backend.md` - Desenvolvimento backend
-   - `agent-frontend.md` - Desenvolvimento frontend
+   - `agent-backend.md` - Desenvolvimento backend (API routes, integrações)
+   - `agent-frontend.md` - Desenvolvimento frontend (Next.js, React)
    - `agent-n8n.md` - Automações e workflows
-   - `agent-ux-ui.md` - Design e experiência
-   - `agent-devops.md` - Infraestrutura e deploy
-   - `agent-security.md` - Segurança e compliance
+   - `agent-ux-ui.md` - Design e experiência do usuário
+   - `agent-devops.md` - Docker, deploy e infraestrutura
+   - `agent-security.md` - Segurança e compliance LGPD
 
 ### Como Usar os Agentes
 ```bash
@@ -128,33 +130,31 @@ farmabot-pro/
 ## 🛠️ Stack Tecnológica Completa
 
 ### Backend
-- **Runtime**: Node.js 20 LTS + TypeScript 5.3
-- **Framework**: NestJS (microservices architecture)
-- **Database**: Supabase (PostgreSQL 15)
-- **Cache**: Redis 7
-- **Queue**: BullMQ
-- **API**: GraphQL + REST
-- **Auth**: Supabase Auth + JWT
+- **Runtime**: Node.js 20 LTS + TypeScript 5
+- **Framework**: Next.js 14 API Routes
+- **Database**: Supabase (PostgreSQL)
+- **Cache**: Redis 7 (via Docker)
+- **API**: REST only
+- **Auth**: Supabase Auth
 
 ### Frontend
 - **Framework**: Next.js 14 (App Router)
 - **UI**: Tailwind CSS + shadcn/ui
-- **State**: Zustand + React Query
-- **Charts**: Recharts + D3.js
-- **Mobile**: React Native + Expo
+- **Forms**: React Hook Form + Zod
+- **File Upload**: React Dropzone + Papa Parse
+- **Icons**: Lucide React
 
 ### DevOps
 - **Containers**: Docker + Docker Compose
-- **Orchestration**: Kubernetes
-- **CI/CD**: GitHub Actions
-- **Monitoring**: Prometheus + Grafana
-- **Logging**: ELK Stack
+- **Environment**: .env files
+- **Development**: Local Docker services
+- **Deployment**: Vercel (frontend) + Docker (services)
 
 ### Integrações
-- **WhatsApp**: Official Business API
-- **n8n**: Self-hosted automation
-- **ERPs**: Vetor, Digifarma, TekFarma
-- **APIs**: ANVISA, CliqueFarma, ConsultaRemédios
+- **WhatsApp**: Official Business API (planned)
+- **n8n**: Self-hosted automation (Docker)
+- **ERPs**: Vetor connector (TypeScript)
+- **APIs**: Exa API (price analysis), Supabase
 
 ## 📋 Padrões de Código
 
@@ -221,37 +221,44 @@ test: add unit tests for product service
 - Princípio do menor privilégio
 - Autenticação multifator para admins
 
-## 📊 Métricas de Sucesso
+## 🎯 Funcionalidades Implementadas
 
-### KPIs Técnicos
-- **Uptime**: > 99.9%
-- **Response Time**: < 200ms (p95)
-- **Error Rate**: < 0.1%
-- **Queue Processing**: < 5s
+### Dashboard Principal
+- Interface administrativa em Next.js 14
+- Upload de produtos via CSV
+- Análise de preços em tempo real
+- Integração com Supabase
 
-### KPIs de Negócio
-- **Taxa de Conversão**: > 15%
-- **Tempo de Resposta Bot**: < 2s
-- **Satisfação do Cliente**: > 4.5/5
-- **Redução de Custos**: > 40%
+### Analisador de Preços
+- Comparação automática via Exa API
+- Análise de posição competitiva
+- Recomendações de preços
+- Monitoramento de margem de lucro
+
+### Conectores ERP
+- Conector Vetor Farma (TypeScript)
+- Sincronização de produtos e estoque
+- Base para outros ERPs
+
+### Automação n8n
+- Workflows de automação
+- Integração com WhatsApp (planejado)
+- Processamento de dados
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-org/farmabot-pro.git
+git clone [repository-url]
 
 # Instale as dependências
 npm install
 
 # Configure as variáveis de ambiente
-cp .env.example .env
+cp .env.example .env.local
 
-# Inicie os serviços com Docker
+# Inicie os serviços Docker
 docker-compose up -d
-
-# Execute as migrações
-npm run db:migrate
 
 # Inicie o desenvolvimento
 npm run dev
@@ -291,17 +298,25 @@ open http://localhost:5678
 
 ### Problemas Comuns
 ```bash
-# WhatsApp webhook não recebe mensagens
-- Verifique o token de verificação
-- Confirme o webhook URL no Meta Business
-
-# n8n não processa workflows
-- Verifique as credenciais
+# Dashboard não carrega
+- Verifique variáveis de ambiente (.env.local)
 - Confirme conexão com Supabase
+- Verifique se Docker services estão rodando
 
-# Dashboard não carrega dados
-- Verifique CORS settings
-- Confirme API keys do Supabase
+# Analisador de preços falha
+- Verifique EXA_API_KEY
+- Confirme conectividade com API externa
+- Verificar logs no console do navegador
+
+# n8n não inicia
+- Verificar se PostgreSQL está rodando
+- Confirmar portas disponíveis (5678)
+- Verificar logs: docker-compose logs n8n
+
+# Erro de upload CSV
+- Verificar formato do arquivo
+- Confirmar colunas obrigatórias
+- Verificar permissões Supabase
 ```
 
 ## 📚 Recursos Adicionais

@@ -3,7 +3,7 @@ import { PriceAnalyzer } from '@/lib/price-analyzer'
 
 export async function POST(request: NextRequest) {
   try {
-    const { farmacia_id, medicamento, estado } = await request.json()
+    const { farmacia_id, medicamento, estado, useMockData } = await request.json()
 
     // Validar parâmetros obrigatórios
     if (!farmacia_id || !medicamento) {
@@ -14,10 +14,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar instância do analisador
-    const analyzer = new PriceAnalyzer(farmacia_id)
+    const analyzer = new PriceAnalyzer(farmacia_id, useMockData)
 
     // Realizar análise de preços
-    const analise = await analyzer.analisarPrecos(medicamento, estado || 'SP')
+    const analise = await analyzer.analisarPrecos(medicamento, estado || 'SP', useMockData)
 
     // Salvar no banco de dados
     await analyzer.salvarAnalise(analise)

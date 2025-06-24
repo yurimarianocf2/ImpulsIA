@@ -211,25 +211,25 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Upload de Produtos</h2>
-          <p className="text-gray-600">Importe sua planilha de produtos em formato CSV</p>
+          <h2 className="text-2xl font-bold text-white">Upload de Produtos</h2>
+          <p className="text-gray-400">Importe sua planilha de produtos em formato CSV</p>
         </div>
-        <Button onClick={downloadTemplate} variant="outline">
+        <Button onClick={downloadTemplate} variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
           <Download className="w-4 h-4 mr-2" />
           Baixar Template
         </Button>
       </div>
 
       {/* Instruções */}
-      <Card>
+      <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
         <CardHeader>
-          <CardTitle className="text-lg">📋 Instruções de Upload</CardTitle>
+          <CardTitle className="text-lg text-white">📋 Instruções de Upload</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 className="font-semibold text-green-700 mb-2">✅ Campos Obrigatórios</h4>
-              <ul className="text-sm space-y-1 text-gray-600">
+              <h4 className="font-semibold text-green-400 mb-2">✅ Campos Obrigatórios</h4>
+              <ul className="text-sm space-y-1 text-gray-300">
                 <li>• <strong>codigo_barras</strong>: 13 dígitos únicos</li>
                 <li>• <strong>nome</strong>: Nome completo do produto</li>
                 <li>• <strong>preco_custo</strong>: Preço de compra (ex: 10.50)</li>
@@ -238,8 +238,8 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-blue-700 mb-2">ℹ️ Campos Opcionais</h4>
-              <ul className="text-sm space-y-1 text-gray-600">
+              <h4 className="font-semibold text-blue-400 mb-2">ℹ️ Campos Opcionais</h4>
+              <ul className="text-sm space-y-1 text-gray-300">
                 <li>• <strong>categoria</strong>: Grupo do produto</li>
                 <li>• <strong>fabricante</strong>: Nome do laboratório</li>
                 <li>• <strong>principio_ativo</strong>: Substância ativa</li>
@@ -249,9 +249,9 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
             </div>
           </div>
           
-          <Alert>
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
+          <Alert className="bg-yellow-950/20 border-yellow-800/30">
+            <AlertTriangle className="h-4 w-4 text-yellow-400" />
+            <AlertDescription className="text-yellow-200">
               <strong>Validações importantes:</strong> Preço de custo deve ser menor que preço de venda. 
               Medicamentos controlados devem ter tipo de receita. Margem mínima recomendada: 5%.
             </AlertDescription>
@@ -260,44 +260,46 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
       </Card>
 
       {/* Upload Area */}
-      <Card>
+      <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
         <CardContent className="p-6">
           {!file ? (
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
                 isDragActive 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-300 hover:border-gray-400'
+                  ? 'border-blue-500 bg-blue-950/20' 
+                  : 'border-gray-600 hover:border-gray-500'
               }`}
             >
               <input {...getInputProps()} />
-              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-500" />
               {isDragActive ? (
-                <p className="text-blue-600">Solte o arquivo CSV aqui...</p>
+                <p className="text-blue-400">Solte o arquivo CSV aqui...</p>
               ) : (
                 <div>
-                  <p className="text-lg font-medium mb-2">Arraste seu arquivo CSV aqui</p>
-                  <p className="text-gray-500 mb-4">ou clique para selecionar</p>
-                  <Button variant="outline">Selecionar Arquivo</Button>
+                  <p className="text-lg font-medium mb-2 text-white">Arraste seu arquivo CSV aqui</p>
+                  <p className="text-gray-400 mb-4">ou clique para selecionar</p>
+                  <Button variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                    Selecionar Arquivo
+                  </Button>
                 </div>
               )}
             </div>
           ) : (
             <div className="space-y-4">
               {/* File Info */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg border border-gray-600">
                 <div className="flex items-center space-x-3">
-                  <FileText className="w-8 h-8 text-blue-500" />
+                  <FileText className="w-8 h-8 text-blue-400" />
                   <div>
-                    <p className="font-medium">{file.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-white">{file.name}</p>
+                    <p className="text-sm text-gray-400">
                       {(file.size / 1024).toFixed(1)} KB
                       {parsedData && ` • ${parsedData.data.length} produtos`}
                     </p>
                   </div>
                 </div>
-                <Button onClick={resetUpload} variant="outline" size="sm">
+                <Button onClick={resetUpload} variant="outline" size="sm" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Trocar Arquivo
                 </Button>
@@ -306,11 +308,11 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
               {/* Progress */}
               {uploading && (
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm text-gray-300">
                     <span>Processando...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <Progress value={uploadProgress} />
+                  <Progress value={uploadProgress} className="bg-gray-700" />
                 </div>
               )}
 
@@ -320,20 +322,21 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
                   <Button 
                     onClick={() => setShowPreview(!showPreview)} 
                     variant="outline"
+                    className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     {showPreview ? 'Ocultar' : 'Visualizar'} Dados
                   </Button>
                   
                   {!validationResult && (
-                    <Button onClick={validateData} variant="outline">
+                    <Button onClick={validateData} variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Validar Dados
                     </Button>
                   )}
                   
                   {validationResult && validationResult.validation_result?.valid_count > 0 && (
-                    <Button onClick={uploadData} className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={uploadData} className="bg-green-600 hover:bg-green-700 text-white">
                       <Upload className="w-4 h-4 mr-2" />
                       Enviar ({validationResult.validation_result.valid_count} produtos)
                     </Button>
@@ -347,17 +350,17 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
 
       {/* Preview */}
       {showPreview && parsedData && (
-        <Card>
+        <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
           <CardHeader>
-            <CardTitle>Prévia dos Dados</CardTitle>
+            <CardTitle className="text-white">Prévia dos Dados</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b">
+                  <tr className="border-b border-gray-700">
                     {Object.keys(parsedData.data[0] || {}).map(key => (
-                      <th key={key} className="text-left p-2 font-medium">
+                      <th key={key} className="text-left p-2 font-medium text-gray-300">
                         {key}
                       </th>
                     ))}
@@ -365,9 +368,9 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
                 </thead>
                 <tbody>
                   {parsedData.data.slice(0, 5).map((row, index) => (
-                    <tr key={index} className="border-b">
+                    <tr key={index} className="border-b border-gray-700">
                       {Object.values(row).map((value: any, i) => (
-                        <td key={i} className="p-2">
+                        <td key={i} className="p-2 text-gray-400">
                           {String(value).substring(0, 30)}
                           {String(value).length > 30 && '...'}
                         </td>
@@ -388,9 +391,9 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
 
       {/* Validation Results */}
       {validationResult && (
-        <Card>
+        <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
+            <CardTitle className="flex items-center space-x-2 text-white">
               {validationResult.validation_result?.error_count === 0 ? (
                 <CheckCircle className="w-5 h-5 text-green-500" />
               ) : (
@@ -402,43 +405,43 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
           <CardContent className="space-y-4">
             <div className="grid grid-cols-4 gap-4">
               <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-blue-400">
                   {validationResult.total_rows}
                 </p>
-                <p className="text-sm text-gray-600">Total</p>
+                <p className="text-sm text-gray-400">Total</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-400">
                   {validationResult.validation_result?.valid_count || 0}
                 </p>
-                <p className="text-sm text-gray-600">Válidos</p>
+                <p className="text-sm text-gray-400">Válidos</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-2xl font-bold text-red-400">
                   {validationResult.validation_result?.error_count || 0}
                 </p>
-                <p className="text-sm text-gray-600">Erros</p>
+                <p className="text-sm text-gray-400">Erros</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-yellow-400">
                   {Math.round((validationResult.validation_result?.valid_count || 0) / (validationResult.total_rows || 1) * 100)}%
                 </p>
-                <p className="text-sm text-gray-600">Taxa Sucesso</p>
+                <p className="text-sm text-gray-400">Taxa Sucesso</p>
               </div>
             </div>
 
             {validationResult.validation_result?.errors?.length > 0 && (
               <div>
-                <h4 className="font-medium text-red-700 mb-2">Erros Encontrados:</h4>
+                <h4 className="font-medium text-red-400 mb-2">Erros Encontrados:</h4>
                 <div className="max-h-48 overflow-y-auto space-y-1">
                   {validationResult.validation_result.errors.slice(0, 10).map((error: any, index: number) => (
-                    <div key={index} className="text-sm p-2 bg-red-50 rounded border-l-4 border-red-500">
-                      <strong>Linha {error.row}:</strong> {error.message}
-                      {error.field && <span className="text-gray-600"> (Campo: {error.field})</span>}
+                    <div key={index} className="text-sm p-2 bg-red-950/20 rounded border-l-4 border-red-500">
+                      <strong className="text-red-300">Linha {error.row}:</strong> <span className="text-red-200">{error.message}</span>
+                      {error.field && <span className="text-gray-500"> (Campo: {error.field})</span>}
                     </div>
                   ))}
                   {validationResult.validation_result.errors.length > 10 && (
-                    <p className="text-sm text-gray-600 text-center">
+                    <p className="text-sm text-gray-500 text-center">
                       ... e mais {validationResult.validation_result.errors.length - 10} erros
                     </p>
                   )}
@@ -451,9 +454,9 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
 
       {/* Upload Results */}
       {uploadResult && (
-        <Card>
+        <Card className="bg-gray-800/60 backdrop-blur-sm border-gray-700">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
+            <CardTitle className="flex items-center space-x-2 text-white">
               {uploadResult.success ? (
                 <CheckCircle className="w-5 h-5 text-green-500" />
               ) : (
@@ -466,36 +469,36 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
             {uploadResult.success ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <p className="text-2xl font-bold text-green-600">
+                  <div className="text-center p-4 bg-green-950/20 rounded-lg border border-green-800/30">
+                    <p className="text-2xl font-bold text-green-400">
                       {uploadResult.data?.summary?.created || 0}
                     </p>
-                    <p className="text-sm text-gray-600">Criados</p>
+                    <p className="text-sm text-gray-400">Criados</p>
                   </div>
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600">
+                  <div className="text-center p-4 bg-blue-950/20 rounded-lg border border-blue-800/30">
+                    <p className="text-2xl font-bold text-blue-400">
                       {uploadResult.data?.summary?.updated || 0}
                     </p>
-                    <p className="text-sm text-gray-600">Atualizados</p>
+                    <p className="text-sm text-gray-400">Atualizados</p>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-600">
+                  <div className="text-center p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                    <p className="text-2xl font-bold text-gray-300">
                       {uploadResult.data?.summary?.failed || 0}
                     </p>
-                    <p className="text-sm text-gray-600">Falhas</p>
+                    <p className="text-sm text-gray-400">Falhas</p>
                   </div>
                 </div>
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
+                <Alert className="bg-green-950/20 border-green-800/30">
+                  <CheckCircle className="h-4 w-4 text-green-400" />
+                  <AlertDescription className="text-green-200">
                     Upload concluído com sucesso! {uploadResult.data?.summary?.successful || 0} produtos processados.
                   </AlertDescription>
                 </Alert>
               </div>
             ) : (
-              <Alert variant="destructive">
-                <XCircle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert variant="destructive" className="bg-red-950/20 border-red-800/30">
+                <XCircle className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-200">
                   {uploadResult.errors?.[0]?.message || 'Erro no upload'}
                 </AlertDescription>
               </Alert>

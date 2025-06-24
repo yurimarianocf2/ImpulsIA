@@ -6,23 +6,18 @@ import {
   ShoppingCart, 
   Package, 
   Users, 
-  TrendingDown,
   Brain,
   AlertTriangle,
   Calendar,
-  DollarSign,
-  Calculator,
   Tag,
-  Percent
+  Percent,
+  Calculator
 } from 'lucide-react';
 import { PriceAnalyzer } from '@/components/price-analyzer-component';
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   
-  // Configuração padrão para a farmácia
-  const farmaciaId = process.env.NEXT_PUBLIC_FARMACIA_ID || 'demo-farmacia-id';
-
   useEffect(() => {
     setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -91,11 +86,10 @@ export default function Dashboard() {
     }
   ];
 
-
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header Simples */}
-      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-800 p-4">
+      {/* Header */}
+      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-800 p-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -129,15 +123,15 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 border border-gray-800 hover:border-gray-700 transition-all duration-300"
+              className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-all duration-300 hover:bg-gray-800/80"
             >
               <div className="flex items-center space-x-3">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${metric.color} flex items-center justify-center`}>
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${metric.color} flex items-center justify-center shadow-lg`}>
                   <metric.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">{metric.label}</p>
-                  <p className="text-xl font-bold">{metric.value}</p>
+                  <p className="text-sm text-gray-300">{metric.label}</p>
+                  <p className="text-xl font-bold text-white">{metric.value}</p>
                 </div>
               </div>
             </motion.div>
@@ -150,19 +144,19 @@ export default function Dashboard() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800"
+            className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
               <Calendar className="w-5 h-5 text-orange-500 mr-2" />
               Produtos Próximos da Validade
             </h3>
             <div className="space-y-3">
               {expiringProducts.map((product, index) => (
-                <div key={index} className="p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-all">
+                <div key={index} className="p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-all border border-gray-600">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-medium text-sm">{product.name}</h4>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-400">
+                      <h4 className="font-medium text-sm text-white">{product.name}</h4>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-300">
                         <span>Validade: {product.expiryDate}</span>
                         <span className={`font-semibold ${
                           product.daysLeft < 45 ? 'text-red-400' : 'text-yellow-400'
@@ -171,23 +165,23 @@ export default function Dashboard() {
                         </span>
                       </div>
                       <div className="flex items-center gap-4 mt-2 text-xs">
-                        <span className="text-gray-400">Qtd: {product.quantity}</span>
-                        <span className="text-gray-400">Preço: {product.currentPrice}</span>
+                        <span className="text-gray-300">Qtd: {product.quantity}</span>
+                        <span className="text-gray-300">Preço: {product.currentPrice}</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center gap-1 bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
+                      <div className="flex items-center gap-1 bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs border border-green-500/30">
                         <Tag className="w-3 h-3" />
                         <span>{product.suggestedDiscount}</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">desconto sugerido</p>
+                      <p className="text-xs text-gray-400 mt-1">desconto sugerido</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <p className="text-xs text-blue-400">
+            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+              <p className="text-xs text-blue-300">
                 💡 Dica: Produtos com menos de 60 dias para vencer devem entrar em promoção progressiva
               </p>
             </div>
@@ -199,7 +193,7 @@ export default function Dashboard() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <PriceAnalyzer farmaciaId={farmaciaId} />
+            <PriceAnalyzer />
           </motion.div>
         </div>
 
@@ -208,9 +202,9 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800"
+          className="mt-8 bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
         >
-          <h3 className="text-lg font-semibold mb-4 flex items-center">
+          <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
             <Percent className="w-5 h-5 text-green-500 mr-2" />
             Produtos com Melhor Margem
           </h3>
@@ -221,13 +215,13 @@ export default function Dashboard() {
               { name: 'Protetor Solar FPS60', margin: '58%', price: 'R$ 55,00', sales: '25/mês' },
               { name: 'Colágeno Hidrolisado', margin: '55%', price: 'R$ 65,00', sales: '30/mês' }
             ].map((product, index) => (
-              <div key={index} className="p-4 bg-gray-800/50 rounded-lg">
-                <h4 className="font-medium text-sm mb-2">{product.name}</h4>
+              <div key={index} className="p-4 bg-gray-700/50 rounded-lg border border-gray-600 hover:bg-gray-700/70 transition-all">
+                <h4 className="font-medium text-sm mb-2 text-white">{product.name}</h4>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-400">Margem:</span>
+                  <span className="text-xs text-gray-300">Margem:</span>
                   <span className="text-green-400 font-bold text-sm">{product.margin}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-400">
+                <div className="flex items-center justify-between text-xs text-gray-300">
                   <span>{product.price}</span>
                   <span>{product.sales}</span>
                 </div>

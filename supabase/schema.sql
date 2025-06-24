@@ -236,6 +236,25 @@ INSERT INTO farmacias (nome, cnpj, telefone, whatsapp_number, endereco) VALUES
 ('Farmácia Saúde & Vida', '12.345.678/0001-90', '11999999999', '5511999999999', 
  '{"rua": "Rua das Flores", "numero": "123", "bairro": "Centro", "cidade": "São Paulo", "uf": "SP", "cep": "01234-567"}'::jsonb);
 
+-- Tabela de Análises de Preço
+CREATE TABLE analises_preco (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    farmacia_id UUID REFERENCES farmacias(id) ON DELETE CASCADE,
+    produto_id UUID REFERENCES produtos(id),
+    preco_local DECIMAL(10,2),
+    preco_medio_mercado DECIMAL(10,2),
+    posicao_competitiva VARCHAR(20), -- 'abaixo', 'medio', 'acima'
+    margem_atual DECIMAL(5,2),
+    precos_externos JSONB DEFAULT '[]',
+    recomendacao TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
+-- Índices para análises de preço
+CREATE INDEX idx_analises_preco_farmacia ON analises_preco(farmacia_id);
+CREATE INDEX idx_analises_preco_produto ON analises_preco(produto_id);
+CREATE INDEX idx_analises_preco_data ON analises_preco(created_at DESC);
+
 -- Comentários nas tabelas
 COMMENT ON TABLE farmacias IS 'Tabela principal de farmácias cadastradas no sistema';
 COMMENT ON TABLE produtos IS 'Catálogo de produtos das farmácias com informações de preço e estoque';
@@ -243,6 +262,7 @@ COMMENT ON TABLE conversas IS 'Histórico de conversas do WhatsApp com contexto'
 COMMENT ON TABLE mensagens IS 'Mensagens individuais trocadas nas conversas';
 COMMENT ON TABLE pedidos IS 'Pedidos realizados através do chatbot';
 COMMENT ON TABLE integracoes_erp IS 'Configurações de integração com sistemas ERP externos';
+COMMENT ON TABLE analises_preco IS 'Histórico de análises de preços e comparações de mercado';
 
 -- =====================================================
 -- NOVAS TABELAS PARA FEATURES AVANÇADAS

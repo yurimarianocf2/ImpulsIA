@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(node:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx next lint:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl:*)",
+      "Bash(apt:*)",
+      "Bash(apt install:*)",
+      "Bash(cat:*)",
+      "Bash(git config:*)",
+      "Bash(find:*)",
+      "mcp__fetch-mcp__fetch_markdown",
+      "Bash(git check-ignore:*)",
+      "Bash(DOTENV_CONFIG_PATH=.env.local node -r dotenv/config -e \"console.log(''NEXT_PUBLIC_FARMACIA_ID:'', process.env.NEXT_PUBLIC_FARMACIA_ID); console.log(''EXA_API_KEY:'', process.env.EXA_API_KEY ? ''SET'' : ''NOT SET'');\")",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(cp:*)",
+      "Bash(dos2unix:*)"
+    ],
+    "deny": []
+  }
+}
