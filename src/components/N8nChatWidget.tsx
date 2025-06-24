@@ -11,6 +11,18 @@ export function N8nChatWidget() {
         mode: 'window',
         showWelcomeScreen: true,
         chatInputKey: 'farmabot-chat',
+        target: '#n8n-chat-widget',
+        theme: {
+          '@n8n-chat--toggle--width': '48px',
+          '@n8n-chat--toggle--height': '48px',
+          '@n8n-chat--toggle--size': '48px',
+          '@n8n-chat--toggle--bottom': '20px',
+          '@n8n-chat--toggle--right': '20px',
+          '@n8n-chat--window--width': '480px',
+          '@n8n-chat--window--height': 'calc(100vh - 120px)',
+          '@n8n-chat--window--bottom': '100px',
+          '@n8n-chat--window--right': '20px',
+        },
         initialMessages: [
           'Olá! 👋',
           'Sou o assistente virtual da FarmaBot Pro.',

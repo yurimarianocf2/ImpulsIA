@@ -65,7 +65,7 @@
     --chat--toggle--hover--background: linear-gradient(135deg, #059669 0%, #047857 100%);
     --chat--toggle--active--background: #047857;
     --chat--toggle--color: #ffffff;
-    --chat--toggle--size: 56px;
+    --chat--toggle--size: 48px;
   }
 }
 
@@ -470,14 +470,25 @@
   transition-duration: 150ms;
 }
 
-/* N8N Chat Widget - Posicionamento Forçado */
+/* N8N Chat Widget - Posicionamento e Tamanho Forçado */
 .n8n-chat-button,
 [class*="chat-toggle"],
-[class*="chat-button"] {
+[class*="chat-button"],
+button[class*="toggle"],
+div[class*="toggle"] {
   position: fixed !important;
   bottom: 20px !important;
   right: 20px !important;
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px !important;
+  max-height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  border-radius: 50% !important;
   z-index: 9999 !important;
+  transform: none !important;
+  scale: 1 !important;
 }
 
 /* Janela do Chat - Posição e Tamanho */
@@ -492,6 +503,32 @@
   z-index: 9998 !important;
 }
 
+/* Correções específicas para N8N Chat Widget */
+[data-chat="toggle"],
+[data-n8n-chat="toggle"],
+.n8n-chat-root button,
+.n8n-chat-root > div:first-child,
+iframe + div button,
+iframe + div > div {
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px !important;
+  max-height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  border-radius: 50% !important;
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  transform: none !important;
+  scale: 1 !important;
+}
+
+/* Reset de qualquer transformação ou escala aplicada */
+:root {
+  --chat--toggle--size: 48px !important;
+}
+
 /* Ajuste para mobile */
 @media (max-width: 640px) {
   .n8n-chat-window,
@@ -501,5 +538,18 @@
     left: 20px !important;
     bottom: 80px !important;
     height: calc(100vh - 100px) !important;
+  }
+  
+  /* Mantém botão pequeno no mobile também */
+  [data-chat="toggle"],
+  [data-n8n-chat="toggle"],
+  .n8n-chat-root button,
+  .n8n-chat-root > div:first-child,
+  iframe + div button,
+  iframe + div > div {
+    width: 44px !important;
+    height: 44px !important;
+    max-width: 44px !important;
+    max-height: 44px !important;
   }
 } 
