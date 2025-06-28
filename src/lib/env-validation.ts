@@ -1,10 +1,18 @@
-import { z } from 'zod';
+import { z, infer as zInfer } from 'zod';
 
 // Client-side environment variables (prefixed with NEXT_PUBLIC_)
 const clientEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url('Invalid Supabase URL'),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   NEXT_PUBLIC_FARMACIA_ID: z.string().uuid('Farmacia ID must be a valid UUID').optional(),
+  // Add feature flags as optional booleans for client-side
+  // They won't be in process.env on client unless NEXT_PUBLIC_
+  // So, default to false if not present.
+  ENABLE_WHATSAPP_INTEGRATION: z.boolean().default(false),
+  ENABLE_ERP_SYNC: z.boolean().default(false),
+  ENABLE_PRICE_ANALYSIS: z.boolean().default(false),
+  ENABLE_ANALYTICS: z.boolean().default(false),
+  ENABLE_FILE_UPLOAD: z.boolean().default(false),
 });
 
 // Server-side environment variables
@@ -66,12 +74,20 @@ const serverEnvSchema = z.object({
   ENABLE_FILE_UPLOAD: z.string().transform(val => val === 'true').default('true'),
 });
 
+type ClientEnv = zInfer<typeof clientEnvSchema>;
+type ServerEnv = zInfer<typeof serverEnvSchema>;
+
 // Validate client environment variables
-function validateClientEnv() {
+function validateClientEnv(): ClientEnv {
   const clientEnv = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_FARMACIA_ID: process.env.NEXT_PUBLIC_FARMACIA_ID,
+    ENABLE_WHATSAPP_INTEGRATION: process.env.ENABLE_WHATSAPP_INTEGRATION === 'true',
+    ENABLE_ERP_SYNC: process.env.ENABLE_ERP_SYNC === 'true',
+    ENABLE_PRICE_ANALYSIS: process.env.ENABLE_PRICE_ANALYSIS === 'true',
+    ENABLE_ANALYTICS: process.env.ENABLE_ANALYTICS === 'true',
+    ENABLE_FILE_UPLOAD: process.env.ENABLE_FILE_UPLOAD === 'true',
   };
 
   const result = clientEnvSchema.safeParse(clientEnv);
@@ -88,7 +104,7 @@ function validateClientEnv() {
 }
 
 // Validate server environment variables
-function validateServerEnv() {
+function validateServerEnv(): ServerEnv {
   const result = serverEnvSchema.safeParse(process.env);
   
   if (!result.success) {
@@ -101,7 +117,9 @@ function validateServerEnv() {
     if (process.env.NODE_ENV === 'development') {
       console.warn('⚠️ Running in development mode with missing environment variables');
       console.warn('💡 Copy .env.local.example to .env.local and configure your variables');
-      return process.env; // Return raw env in development
+      // In development, return a partial ServerEnv based on process.env and schema defaults
+      const partialEnv = serverEnvSchema.parse(process.env);
+      return partialEnv; // Return validated data in development
     }
     
     throw new Error('Invalid server environment configuration');
@@ -153,7 +171,7 @@ export function checkCriticalEnvVars(): { missing: string[]; warnings: string[] 
 }
 
 // Get validated environment variables
-export const env = (() => {
+export const env: ClientEnv | ServerEnv = (() => {
   if (typeof window !== 'undefined') {
     // Client-side
     return validateClientEnv();
