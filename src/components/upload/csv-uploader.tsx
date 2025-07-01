@@ -182,15 +182,16 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
   }
 
   const downloadTemplate = () => {
-    const template = `codigo_barras,nome,categoria,fabricante,principio_ativo,apresentacao,preco_custo,preco_venda,estoque_atual,estoque_minimo,requer_receita,tipo_receita
-7896658451234,Dipirona 500mg,Analgesicos,Medley,Dipirona Monoidratada,500mg 20 comprimidos,3.50,8.90,45,10,false,
-7896658451235,Rivotril 2mg,Controlados,Roche,Clonazepam,2mg 30 comprimidos,12.00,35.00,15,5,true,azul`
+    const template = `codigo_barras,nome,nome_comercial,nome_generico,principio_ativo,concentracao,forma_farmaceutica,apresentacao,categoria,subcategoria,classe_terapeutica,fabricante,laboratorio,preco_custo,preco_venda,preco_tabela,desconto_maximo,estoque_atual,estoque_minimo,estoque_maximo,unidade,lote,validade,data_entrada,requer_receita,tipo_receita,controlado,psicoativo,antimicrobiano,indicacao,contraindicacao,posologia,observacoes
+7896658451234,Dipirona 500mg,Novalgina,Dipirona Sódica,Dipirona Monoidratada,500mg,comprimido,500mg 20 comprimidos,Analgesicos,Analgesicos não opioides,Sistema Nervoso,Medley,Sanofi,3.50,8.90,9.50,15,45,10,100,UN,L240101,2025-12-31,2024-01-15,false,,false,false,false,Dor e febre,Alergia ao princípio ativo,1 comprimido a cada 6 horas,Não usar por mais de 5 dias
+7896658451235,Rivotril 2mg,Rivotril,Clonazepam,Clonazepam,2mg,comprimido,2mg 30 comprimidos,Controlados,Benzodiazepínicos,Sistema Nervoso,Roche,Roche,12.00,35.00,38.00,5,15,5,50,UN,L240102,2026-06-30,2024-01-20,true,azul,true,true,false,Ansiedade e convulsões,Miastenia gravis,0.5 a 1mg antes de dormir,Receituário azul obrigatório
+7896658451236,Vitamina D3 2000UI,Addera D3,Colecalciferol,Colecalciferol,2000UI,gota,15ml frasco conta-gotas,Vitaminas,Vitaminas D,Vitaminas,EMS,EMS,18.50,42.00,45.00,20,25,8,80,UN,L240103,2025-08-15,2024-02-01,false,,false,false,false,Deficiência de vitamina D,Hipercalcemia,2 gotas ao dia,Tomar com alimentos gordurosos`
 
     const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
     link.setAttribute('href', url)
-    link.setAttribute('download', 'template-produtos-farmacia.csv')
+    link.setAttribute('download', 'template-medicamentos-farmacia.csv')
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
@@ -214,7 +215,7 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
           <h2 className="text-2xl font-bold text-white">Upload de Produtos</h2>
           <p className="text-gray-400">Importe sua planilha de produtos em formato CSV</p>
         </div>
-        <Button onClick={downloadTemplate} variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+        <Button onClick={downloadTemplate} variant="secondary" className="bg-gray-700 hover:bg-gray-600 text-white">
           <Download className="w-4 h-4 mr-2" />
           Baixar Template
         </Button>
@@ -231,7 +232,8 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
               <h4 className="font-semibold text-green-400 mb-2">✅ Campos Obrigatórios</h4>
               <ul className="text-sm space-y-1 text-gray-300">
                 <li>• <strong>codigo_barras</strong>: 13 dígitos únicos</li>
-                <li>• <strong>nome</strong>: Nome completo do produto</li>
+                <li>• <strong>nome</strong>: Nome completo do medicamento</li>
+                <li>• <strong>validade</strong>: Data de validade (AAAA-MM-DD)</li>
                 <li>• <strong>preco_custo</strong>: Preço de compra (ex: 10.50)</li>
                 <li>• <strong>preco_venda</strong>: Preço de venda (ex: 25.90)</li>
                 <li>• <strong>estoque_atual</strong>: Quantidade em estoque</li>
@@ -240,11 +242,14 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
             <div>
               <h4 className="font-semibold text-blue-400 mb-2">ℹ️ Campos Opcionais</h4>
               <ul className="text-sm space-y-1 text-gray-300">
-                <li>• <strong>categoria</strong>: Grupo do produto</li>
-                <li>• <strong>fabricante</strong>: Nome do laboratório</li>
                 <li>• <strong>principio_ativo</strong>: Substância ativa</li>
+                <li>• <strong>categoria/subcategoria</strong>: Classificação</li>
+                <li>• <strong>fabricante/laboratorio</strong>: Empresa</li>
+                <li>• <strong>concentracao</strong>: Dosagem (ex: 500mg)</li>
+                <li>• <strong>forma_farmaceutica</strong>: comprimido/xarope</li>
                 <li>• <strong>requer_receita</strong>: true/false</li>
                 <li>• <strong>tipo_receita</strong>: branca/azul/amarela</li>
+                <li>• <strong>lote</strong>: Número do lote</li>
               </ul>
             </div>
           </div>
@@ -279,7 +284,7 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
                 <div>
                   <p className="text-lg font-medium mb-2 text-white">Arraste seu arquivo CSV aqui</p>
                   <p className="text-gray-400 mb-4">ou clique para selecionar</p>
-                  <Button variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                  <Button variant="secondary" className="bg-gray-700 hover:bg-gray-600 text-white">
                     Selecionar Arquivo
                   </Button>
                 </div>
@@ -299,7 +304,7 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
                     </p>
                   </div>
                 </div>
-                <Button onClick={resetUpload} variant="outline" size="sm" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                <Button onClick={resetUpload} variant="secondary" size="sm" className="bg-gray-700 hover:bg-gray-600 text-white">
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Trocar Arquivo
                 </Button>
@@ -321,15 +326,15 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
                 <div className="flex space-x-3">
                   <Button 
                     onClick={() => setShowPreview(!showPreview)} 
-                    variant="outline"
-                    className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
+                    variant="secondary"
+                    className="bg-gray-700 hover:bg-gray-600 text-white"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     {showPreview ? 'Ocultar' : 'Visualizar'} Dados
                   </Button>
                   
                   {!validationResult && (
-                    <Button onClick={validateData} variant="outline" className="border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                    <Button onClick={validateData} variant="secondary" className="bg-gray-700 hover:bg-gray-600 text-white">
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Validar Dados
                     </Button>
