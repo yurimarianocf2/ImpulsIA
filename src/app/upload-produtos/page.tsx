@@ -9,11 +9,13 @@ import { ArrowLeft, Upload, FileText, CheckCircle, AlertTriangle, Info, HelpCirc
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 
+import { getCurrentFarmaciaId } from '@/lib/farmacia-context'
+
 export default function UploadProdutosPage() {
   const [uploadStats, setUploadStats] = useState<any>(null)
   
-  // O ID da farmácia agora vem do ambiente, garantindo que seja um UUID válido
-  const farmaciaId = process.env.NEXT_PUBLIC_FARMACIA_ID || ''
+  // O ID da farmácia agora vem do contexto centralizado
+  const farmaciaId = getCurrentFarmaciaId()
 
   const handleUploadComplete = (result: any) => {
     setUploadStats(result.data?.summary)
@@ -27,7 +29,7 @@ export default function UploadProdutosPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link href="/">
-                <Button variant="outline" size="sm" className="border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white">
+                <Button variant="secondary" size="sm" className="bg-gray-700 hover:bg-gray-600 text-white">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Dashboard
                 </Button>
@@ -184,11 +186,11 @@ export default function UploadProdutosPage() {
                   Precisa de ajuda com o upload? Nossa equipe está aqui para ajudar!
                 </p>
                 <div className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                  <Button variant="secondary" size="sm" className="w-full bg-gray-700 hover:bg-gray-600 text-white">
                     <FileText className="w-4 h-4 mr-2" />
                     Ver Documentação
                   </Button>
-                  <Button variant="outline" size="sm" className="w-full border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white">
+                  <Button variant="secondary" size="sm" className="w-full bg-gray-700 hover:bg-gray-600 text-white">
                     <HelpCircle className="w-4 h-4 mr-2" />
                     Chat de Suporte
                   </Button>
