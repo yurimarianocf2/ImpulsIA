@@ -43,6 +43,7 @@ CREATE TABLE produtos (
     unidade VARCHAR(20) DEFAULT 'UN',
     requer_receita BOOLEAN DEFAULT false,
     tipo_receita VARCHAR(50), -- 'branca', 'azul', 'amarela', etc
+    validade DATE, -- Data de validade do produto
     ativo BOOLEAN DEFAULT true,
     metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),

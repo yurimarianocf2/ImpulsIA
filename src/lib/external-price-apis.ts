@@ -55,7 +55,14 @@ interface ExternalPrice {
   disponivel: boolean
   estado: string
   fonte: string
+  link_fonte?: string
   url?: string
+  dosagem?: string
+  quantidade?: string  // Ex: "30 comprimidos", "100ml", "60 cápsulas"
+  volume?: string      // Ex: "100ml", "250ml" (for liquids)
+  apresentacao?: string // Ex: "Caixa com 30 comprimidos de 500mg"
+  unidade?: string     // Ex: "comprimido", "ml", "cápsula"
+  precoPorUnidade?: number // Preço por comprimido/ml/cápsula
 }
 
 export class CliquefarmaAPI implements ExternalPriceAPI {
@@ -104,8 +111,12 @@ export class CliquefarmaAPI implements ExternalPriceAPI {
         preco: parseFloat(item.price) || 0,
         disponivel: item.available !== false,
         estado: item.state || estado,
-        fonte: 'cliquefarma',
-        url: item.url
+        fonte: 'CliqueFarma',
+        link_fonte: item.url || item.product_url,
+        apresentacao: item.presentation || item.package_info,
+        quantidade: item.quantity || item.package_size,
+        volume: item.volume,
+        dosagem: item.dosage || item.strength
       })) || []
 
       // Salvar no cache
@@ -121,27 +132,59 @@ export class CliquefarmaAPI implements ExternalPriceAPI {
   private getMockData(medicamento: string, estado: string): ExternalPrice[] {
     const basePrice = 15 + Math.random() * 10 // Preço base entre 15-25
     
+    // Mock data based on medicine type
+    const isLiquid = medicamento.toLowerCase().includes('xarope') || 
+                     medicamento.toLowerCase().includes('suspensão') ||
+                     medicamento.toLowerCase().includes('solução');
+    
+    const packageOptions = isLiquid 
+      ? ['100ml', '120ml', '150ml', '200ml']
+      : ['10 comprimidos', '20 comprimidos', '30 comprimidos', '60 comprimidos'];
+    
     return [
       {
         farmacia: 'Drogasil',
         preco: parseFloat((basePrice * 1.1).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'cliquefarma'
+        fonte: 'CliqueFarma',
+        link_fonte: 'https://www.drogasil.com.br',
+        apresentacao: `Caixa com ${packageOptions[0]}`,
+        quantidade: packageOptions[0],
+        volume: isLiquid ? packageOptions[0] : undefined
       },
       {
         farmacia: 'Droga Raia',
         preco: parseFloat((basePrice * 1.05).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'cliquefarma'
+        fonte: 'CliqueFarma',
+        link_fonte: 'https://www.drogaraia.com.br',
+        apresentacao: `Caixa com ${packageOptions[1]}`,
+        quantidade: packageOptions[1],
+        volume: isLiquid ? packageOptions[1] : undefined
       },
       {
         farmacia: 'Ultrafarma',
         preco: parseFloat((basePrice * 0.95).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'cliquefarma'
+        fonte: 'CliqueFarma',
+        link_fonte: 'https://www.ultrafarma.com.br',
+        apresentacao: `Caixa com ${packageOptions[2]}`,
+        quantidade: packageOptions[2],
+        volume: isLiquid ? packageOptions[2] : undefined
+      },
+      {
+        farmacia: 'Onofre',
+        preco: parseFloat((basePrice * 1.08).toFixed(2)),
+        disponivel: false,
+        estado,
+        fonte: 'CliqueFarma',
+        link_fonte: 'https://www.onofre.com.br',
+        apresentacao: `Caixa com ${packageOptions[3]}`,
+        quantidade: packageOptions[3],
+        volume: isLiquid ? packageOptions[3] : undefined
       }
     ]
   }
@@ -226,10 +269,14 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
       const results = response.data?.products?.map((product: any) => ({
         farmacia: product.pharmacy?.name || 'N/A',
         preco: parseFloat(product.price) || 0,
-        disponivel: product.in_stock !== false,
+        disponivel: product.available !== false,
         estado: product.pharmacy?.state || estado,
-        fonte: 'consultaremedios',
-        url: product.url
+        fonte: 'ConsultaRemedios',
+        link_fonte: product.url || product.link,
+        apresentacao: product.presentation || product.package_description,
+        quantidade: product.package_size || product.quantity,
+        volume: product.volume,
+        dosagem: product.concentration || product.dosage
       })) || []
 
       // Salvar no cache
@@ -245,27 +292,59 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
   private getMockData(medicamento: string, estado: string): ExternalPrice[] {
     const basePrice = 14 + Math.random() * 12 // Preço base entre 14-26
     
+    // Mock data based on medicine type
+    const isLiquid = medicamento.toLowerCase().includes('xarope') || 
+                     medicamento.toLowerCase().includes('suspensão') ||
+                     medicamento.toLowerCase().includes('solução');
+    
+    const packageOptions = isLiquid 
+      ? ['120ml', '150ml', '200ml', '250ml']
+      : ['20 comprimidos', '30 comprimidos', '60 comprimidos', '90 comprimidos'];
+    
     return [
       {
         farmacia: 'Pague Menos',
         preco: parseFloat((basePrice * 1.08).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'consultaremedios'
+        fonte: 'ConsultaRemedios',
+        link_fonte: 'https://www.paguemenos.com.br',
+        apresentacao: `Caixa com ${packageOptions[0]}`,
+        quantidade: packageOptions[0],
+        volume: isLiquid ? packageOptions[0] : undefined
       },
       {
         farmacia: 'Farmácia São João',
         preco: parseFloat((basePrice * 1.15).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'consultaremedios'
+        fonte: 'ConsultaRemedios',
+        link_fonte: 'https://www.farmaciasaojoao.com.br',
+        apresentacao: `Caixa com ${packageOptions[1]}`,
+        quantidade: packageOptions[1],
+        volume: isLiquid ? packageOptions[1] : undefined
       },
       {
         farmacia: 'Drogaria Pacheco',
         preco: parseFloat((basePrice * 0.92).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'consultaremedios'
+        fonte: 'ConsultaRemedios',
+        link_fonte: 'https://www.drogariapacheco.com.br',
+        apresentacao: `Caixa com ${packageOptions[2]}`,
+        quantidade: packageOptions[2],
+        volume: isLiquid ? packageOptions[2] : undefined
+      },
+      {
+        farmacia: 'Farmácia Popular',
+        preco: parseFloat((basePrice * 1.02).toFixed(2)),
+        disponivel: false,
+        estado,
+        fonte: 'ConsultaRemedios',
+        link_fonte: 'https://www.farmaciapopular.com.br',
+        apresentacao: `Caixa com ${packageOptions[3]}`,
+        quantidade: packageOptions[3],
+        volume: isLiquid ? packageOptions[3] : undefined
       }
     ]
   }
@@ -405,6 +484,16 @@ export class ExaSearchAPI implements ExternalPriceAPI {
       try {
         const farmaciaInfo = this.extractPharmacyInfo(result)
         const preco = this.extractPrice(result.text || result.summary)
+        const textContent = result.text || result.summary || ''; // Use textContent for extraction
+
+        const dosagem = this.extractDosage(textContent);
+        const quantidade = this.extractQuantity(textContent);
+        const unidade = this.extractUnit(textContent);
+
+        let precoPorUnidade: number | undefined;
+        if (preco > 0 && quantidade && quantidade > 0) {
+          precoPorUnidade = parseFloat((preco / quantidade).toFixed(2));
+        }
         
         if (farmaciaInfo.nome && preco > 0) {
           precos.push({
@@ -413,7 +502,11 @@ export class ExaSearchAPI implements ExternalPriceAPI {
             disponivel: true,
             estado: estado,
             fonte: 'exa_search',
-            url: result.url
+            url: result.url,
+            dosagem: dosagem,
+            quantidade: quantidade ? String(quantidade) : undefined,
+            unidade: unidade,
+            precoPorUnidade: precoPorUnidade
           })
         }
       } catch (error) {
@@ -493,6 +586,29 @@ export class ExaSearchAPI implements ExternalPriceAPI {
     return 0
   }
 
+  private extractDosage(text: string): string | undefined {
+    const dosageRegex = /(\d+\.?\d*\s*(?:mg|g|mcg|UI|unidades|ml|L|%))/i
+    const match = text.match(dosageRegex)
+    return match ? match[1] : undefined
+  }
+
+  private extractQuantity(text: string): number | undefined {
+    // Regex para encontrar quantidade de comprimidos/cápsulas/ml/etc.
+    // Ex: "30 comprimidos", "100ml", "cx com 20", "blister c/ 10"
+    const quantityRegex = /(?:(\d+)\s*(?:comprimidos|capsulas|cápsulas|drageas|drageas|ml|g|unidades|flaconetes|saches|envelopes|ampolas|frascos)|(?:cx|blister|caixa|pote)\s*(?:com|c\/)?\s*(\d+))/i
+    const match = text.match(quantityRegex)
+    if (match) {
+      return parseInt(match[1] || match[2])
+    }
+    return undefined
+  }
+
+  private extractUnit(text: string): string | undefined {
+    const unitRegex = /(comprimido|comprimidos|capsula|cápsula|capsulas|cápsulas|dragea|drágea|drageas|drágeas|ml|g|unidade|unidades|flaconete|sache|envelope|ampola|frasco)/i
+    const match = text.match(unitRegex)
+    return match ? match[1].toLowerCase() : undefined
+  }
+
   private generatePricesFromContent(results: any[], medicamento: string, estado: string): ExternalPrice[] {
     // Gerar preços baseados no número de resultados encontrados
     const basePrice = 15 + Math.random() * 20 // Preço base entre 15-35
@@ -513,8 +629,10 @@ export class ExaSearchAPI implements ExternalPriceAPI {
         preco: parseFloat((basePrice * (0.9 + Math.random() * 0.3)).toFixed(2)),
         disponivel: true,
         estado: estado,
-        fonte: 'exa_search',
-        url: result.url
+        fonte: 'EXA Search',
+        link_fonte: result.url,
+        apresentacao: `Caixa com ${20 + (i * 10)} comprimidos`,
+        quantidade: `${20 + (i * 10)} comprimidos`
       })
     }
     
@@ -524,34 +642,59 @@ export class ExaSearchAPI implements ExternalPriceAPI {
   private getMockData(medicamento: string, estado: string): ExternalPrice[] {
     const basePrice = 16 + Math.random() * 18 // Preço base entre 16-34
     
+    // Mock data based on medicine type
+    const isLiquid = medicamento.toLowerCase().includes('xarope') || 
+                     medicamento.toLowerCase().includes('suspensão') ||
+                     medicamento.toLowerCase().includes('solução');
+    
+    const packageOptions = isLiquid 
+      ? ['100ml', '150ml', '200ml', '250ml']
+      : ['15 comprimidos', '30 comprimidos', '45 comprimidos', '60 comprimidos'];
+    
     return [
       {
         farmacia: 'Drogasil',
         preco: parseFloat((basePrice * 1.1).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'exa_search'
+        fonte: 'EXA Search',
+        link_fonte: 'https://www.drogasil.com.br',
+        apresentacao: `Caixa com ${packageOptions[0]}`,
+        quantidade: packageOptions[0],
+        volume: isLiquid ? packageOptions[0] : undefined
       },
       {
         farmacia: 'Droga Raia',
         preco: parseFloat((basePrice * 1.05).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'exa_search'
+        fonte: 'EXA Search',
+        link_fonte: 'https://www.drogaraia.com.br',
+        apresentacao: `Caixa com ${packageOptions[1]}`,
+        quantidade: packageOptions[1],
+        volume: isLiquid ? packageOptions[1] : undefined
       },
       {
         farmacia: 'Ultrafarma',
         preco: parseFloat((basePrice * 0.95).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'exa_search'
+        fonte: 'EXA Search',
+        link_fonte: 'https://www.ultrafarma.com.br',
+        apresentacao: `Caixa com ${packageOptions[2]}`,
+        quantidade: packageOptions[2],
+        volume: isLiquid ? packageOptions[2] : undefined
       },
       {
         farmacia: 'Pague Menos',
         preco: parseFloat((basePrice * 1.08).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'exa_search'
+        fonte: 'EXA Search',
+        link_fonte: 'https://www.paguemenos.com.br',
+        apresentacao: `Caixa com ${packageOptions[3]}`,
+        quantidade: packageOptions[3],
+        volume: isLiquid ? packageOptions[3] : undefined
       }
     ]
   }

@@ -5,14 +5,12 @@ const clientEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url('Invalid Supabase URL'),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   NEXT_PUBLIC_FARMACIA_ID: z.string().uuid('Farmacia ID must be a valid UUID').optional(),
-  // Add feature flags as optional booleans for client-side
-  // They won't be in process.env on client unless NEXT_PUBLIC_
-  // So, default to false if not present.
-  ENABLE_WHATSAPP_INTEGRATION: z.boolean().default(false),
-  ENABLE_ERP_SYNC: z.boolean().default(false),
-  ENABLE_PRICE_ANALYSIS: z.boolean().default(false),
-  ENABLE_ANALYTICS: z.boolean().default(false),
-  ENABLE_FILE_UPLOAD: z.boolean().default(false),
+  // Feature flags for client-side (optional since they may not be set)
+  NEXT_PUBLIC_ENABLE_WHATSAPP_INTEGRATION: z.boolean().default(false),
+  NEXT_PUBLIC_ENABLE_ERP_SYNC: z.boolean().default(false),
+  NEXT_PUBLIC_ENABLE_PRICE_ANALYSIS: z.boolean().default(true),
+  NEXT_PUBLIC_ENABLE_ANALYTICS: z.boolean().default(false),
+  NEXT_PUBLIC_ENABLE_FILE_UPLOAD: z.boolean().default(true),
 });
 
 // Server-side environment variables
@@ -83,20 +81,24 @@ function validateClientEnv(): ClientEnv {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_FARMACIA_ID: process.env.NEXT_PUBLIC_FARMACIA_ID,
-    ENABLE_WHATSAPP_INTEGRATION: process.env.ENABLE_WHATSAPP_INTEGRATION === 'true',
-    ENABLE_ERP_SYNC: process.env.ENABLE_ERP_SYNC === 'true',
-    ENABLE_PRICE_ANALYSIS: process.env.ENABLE_PRICE_ANALYSIS === 'true',
-    ENABLE_ANALYTICS: process.env.ENABLE_ANALYTICS === 'true',
-    ENABLE_FILE_UPLOAD: process.env.ENABLE_FILE_UPLOAD === 'true',
+    NEXT_PUBLIC_ENABLE_WHATSAPP_INTEGRATION: process.env.NEXT_PUBLIC_ENABLE_WHATSAPP_INTEGRATION === 'true',
+    NEXT_PUBLIC_ENABLE_ERP_SYNC: process.env.NEXT_PUBLIC_ENABLE_ERP_SYNC === 'true',
+    NEXT_PUBLIC_ENABLE_PRICE_ANALYSIS: process.env.NEXT_PUBLIC_ENABLE_PRICE_ANALYSIS !== 'false', // Default to true
+    NEXT_PUBLIC_ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true',
+    NEXT_PUBLIC_ENABLE_FILE_UPLOAD: process.env.NEXT_PUBLIC_ENABLE_FILE_UPLOAD !== 'false', // Default to true
   };
 
   const result = clientEnvSchema.safeParse(clientEnv);
   
   if (!result.success) {
-    console.error('❌ Invalid client environment variables:');
+    console.warn('⚠️ Client environment validation issues:');
     result.error.issues.forEach(issue => {
-      console.error(`  - ${issue.path.join('.')}: ${issue.message}`);
+      console.warn(`  - ${issue.path.join('.')}: ${issue.message}`);
     });
+    // In development, return defaults rather than throwing
+    if (process.env.NODE_ENV === 'development') {
+      return clientEnvSchema.parse({});
+    }
     throw new Error('Invalid client environment configuration');
   }
   
@@ -170,19 +172,61 @@ export function checkCriticalEnvVars(): { missing: string[]; warnings: string[] 
   return { missing, warnings };
 }
 
-// Get validated environment variables
+// Get validated environment variables (lazy loading to avoid SSR issues)
 export const env: ClientEnv | ServerEnv = (() => {
-  if (typeof window !== 'undefined') {
-    // Client-side
-    return validateClientEnv();
-  } else {
-    // Server-side
-    return validateServerEnv();
+  try {
+    if (typeof window !== 'undefined') {
+      // Client-side
+      return validateClientEnv();
+    } else {
+      // Server-side
+      return validateServerEnv();
+    }
+  } catch (error) {
+    console.warn('Environment validation failed, using defaults:', error);
+    // Return safe defaults
+    if (typeof window !== 'undefined') {
+      return {
+        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+        NEXT_PUBLIC_FARMACIA_ID: process.env.NEXT_PUBLIC_FARMACIA_ID,
+        NEXT_PUBLIC_ENABLE_WHATSAPP_INTEGRATION: false,
+        NEXT_PUBLIC_ENABLE_ERP_SYNC: false,
+        NEXT_PUBLIC_ENABLE_PRICE_ANALYSIS: true,
+        NEXT_PUBLIC_ENABLE_ANALYTICS: false,
+        NEXT_PUBLIC_ENABLE_FILE_UPLOAD: true,
+      } as ClientEnv;
+    } else {
+      // Return minimal server defaults
+      return {
+        NODE_ENV: (process.env.NODE_ENV as any) || 'development',
+        ENABLE_PRICE_ANALYSIS: true,
+        ENABLE_FILE_UPLOAD: true,
+        ENABLE_WHATSAPP_INTEGRATION: false,
+        ENABLE_ERP_SYNC: false,
+        ENABLE_ANALYTICS: false,
+        PORT: 3000,
+        RATE_LIMIT_WINDOW_MS: 60000,
+        RATE_LIMIT_MAX_REQUESTS: 100,
+        REDIS_HOST: 'localhost',
+        REDIS_PORT: 6379,
+        LOG_LEVEL: 'info',
+        USE_MOCK_DATA: false,
+      } as any;
+    }
   }
 })();
 
 // Export client env separately for use in client components
-export const clientEnv = validateClientEnv();
+// Only validate on client-side to avoid SSR issues
+export const clientEnv = (() => {
+  try {
+    return typeof window !== 'undefined' ? validateClientEnv() : {} as ClientEnv;
+  } catch (error) {
+    console.warn('Client env validation failed:', error);
+    return {} as ClientEnv;
+  }
+})();
 
 // Environment status checker
 export function getEnvStatus() {
@@ -206,42 +250,76 @@ export function getEnvStatus() {
 // Development helper to print environment status
 export function printEnvStatus() {
   if (process.env.NODE_ENV === 'development') {
-    const status = getEnvStatus();
-    
-    console.log('\n🔧 Environment Configuration Status:');
-    console.log(`  Overall Health: ${status.healthy ? '✅ Healthy' : '❌ Issues Found'}`);
-    console.log(`  Supabase: ${status.supabase_configured ? '✅' : '❌'}`);
-    console.log(`  Farmacia ID: ${status.farmacia_configured ? '✅' : '⚠️'}`);
-    console.log(`  EXA API: ${status.exa_configured ? '✅' : '❌'}`);
-    console.log(`  WhatsApp: ${status.whatsapp_configured ? '✅' : '⚠️'}`);
-    console.log(`  Redis: ${status.redis_configured ? '✅' : '⚠️'}`);
-    console.log(`  Encryption: ${status.encryption_configured ? '✅' : '⚠️'}`);
-    
-    if (status.critical_missing.length > 0) {
-      console.log('\n❌ Critical Missing Variables:');
-      status.critical_missing.forEach(key => console.log(`  - ${key}`));
+    try {
+      const status = getEnvStatus();
+      
+      console.log('\n🔧 Environment Configuration Status:');
+      console.log(`  Overall Health: ${status.healthy ? '✅ Healthy' : '❌ Issues Found'}`);
+      console.log(`  Supabase: ${status.supabase_configured ? '✅' : '❌'}`);
+      console.log(`  Farmacia ID: ${status.farmacia_configured ? '✅' : '⚠️'}`);
+      console.log(`  EXA API: ${status.exa_configured ? '✅' : '❌'}`);
+      console.log(`  WhatsApp: ${status.whatsapp_configured ? '✅' : '⚠️'}`);
+      console.log(`  Redis: ${status.redis_configured ? '✅' : '⚠️'}`);
+      console.log(`  Encryption: ${status.encryption_configured ? '✅' : '⚠️'}`);
+      
+      if (status.critical_missing.length > 0) {
+        console.log('\n❌ Critical Missing Variables:');
+        status.critical_missing.forEach(key => console.log(`  - ${key}`));
+      }
+      
+      if (status.warnings.length > 0) {
+        console.log('\n⚠️ Missing Optional Variables:');
+        status.warnings.forEach(key => console.log(`  - ${key}`));
+      }
+      
+      if (!status.healthy) {
+        console.log('\n💡 Copy .env.local.example to .env.local and configure your variables');
+      }
+      
+      console.log('');
+    } catch (error) {
+      console.warn('⚠️ Could not print environment status:', error);
     }
-    
-    if (status.warnings.length > 0) {
-      console.log('\n⚠️ Missing Optional Variables:');
-      status.warnings.forEach(key => console.log(`  - ${key}`));
-    }
-    
-    if (!status.healthy) {
-      console.log('\n💡 Copy .env.local.example to .env.local and configure your variables');
-    }
-    
-    console.log('');
   }
 }
 
-// Feature flag helpers
+// Feature flag helpers (with safe defaults)
 export const features = {
-  whatsappEnabled: env.ENABLE_WHATSAPP_INTEGRATION,
-  erpSyncEnabled: env.ENABLE_ERP_SYNC,
-  priceAnalysisEnabled: env.ENABLE_PRICE_ANALYSIS,
-  analyticsEnabled: env.ENABLE_ANALYTICS,
-  fileUploadEnabled: env.ENABLE_FILE_UPLOAD,
+  whatsappEnabled: (() => {
+    try {
+      return typeof window !== 'undefined' 
+        ? (env as ClientEnv).NEXT_PUBLIC_ENABLE_WHATSAPP_INTEGRATION 
+        : (env as ServerEnv).ENABLE_WHATSAPP_INTEGRATION;
+    } catch { return false; }
+  })(),
+  erpSyncEnabled: (() => {
+    try {
+      return typeof window !== 'undefined' 
+        ? (env as ClientEnv).NEXT_PUBLIC_ENABLE_ERP_SYNC 
+        : (env as ServerEnv).ENABLE_ERP_SYNC;
+    } catch { return false; }
+  })(),
+  priceAnalysisEnabled: (() => {
+    try {
+      return typeof window !== 'undefined' 
+        ? (env as ClientEnv).NEXT_PUBLIC_ENABLE_PRICE_ANALYSIS 
+        : (env as ServerEnv).ENABLE_PRICE_ANALYSIS;
+    } catch { return true; }
+  })(),
+  analyticsEnabled: (() => {
+    try {
+      return typeof window !== 'undefined' 
+        ? (env as ClientEnv).NEXT_PUBLIC_ENABLE_ANALYTICS 
+        : (env as ServerEnv).ENABLE_ANALYTICS;
+    } catch { return false; }
+  })(),
+  fileUploadEnabled: (() => {
+    try {
+      return typeof window !== 'undefined' 
+        ? (env as ClientEnv).NEXT_PUBLIC_ENABLE_FILE_UPLOAD 
+        : (env as ServerEnv).ENABLE_FILE_UPLOAD;
+    } catch { return true; }
+  })(),
 };
 
 // Export validation functions for use in middleware

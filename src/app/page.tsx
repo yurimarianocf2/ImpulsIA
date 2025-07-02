@@ -14,15 +14,81 @@ import {
   Calculator
 } from 'lucide-react';
 import { PriceAnalyzer } from '@/components/price-analyzer-component';
+import { getCurrentFarmaciaId } from '@/lib/farmacia-context';
+
+interface ExpiringProduct {
+  id: string;
+  nome: string;
+  principio_ativo?: string;
+  categoria?: string;
+  validade: string;
+  dias_para_vencer: number;
+  status_validade: string;
+  estoque_atual: number;
+  preco_venda: number;
+  lote?: string;
+  urgencia?: string;
+  valor_total_estoque?: number;
+  recomendacao?: string;
+}
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [expiringProducts, setExpiringProducts] = useState<ExpiringProduct[]>([]);
+  const [loadingExpiring, setLoadingExpiring] = useState(true);
   
   useEffect(() => {
     setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    fetchExpiringProducts();
+  }, []);
+
+  const fetchExpiringProducts = async () => {
+    try {
+      setLoadingExpiring(true);
+      // Using farmacia context instead of hardcoded value
+      const farmaciaId = getCurrentFarmaciaId();
+      const response = await fetch(`/api/expiring-products?farmacia_id=${farmaciaId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setExpiringProducts(data || []);
+      } else {
+        console.error('Failed to fetch expiring products');
+        setExpiringProducts([]);
+      }
+    } catch (error) {
+      console.error('Error fetching expiring products:', error);
+      setExpiringProducts([]);
+    } finally {
+      setLoadingExpiring(false);
+    }
+  };
+
+  const formatPrice = (price: number): string => {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  };
+
+  const getUrgencyColor = (urgencia: string): string => {
+    switch (urgencia) {
+      case 'critica': return 'text-red-400 border-red-500/30 bg-red-500/10';
+      case 'alta': return 'text-orange-400 border-orange-500/30 bg-orange-500/10';
+      case 'media': return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
+      default: return 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+    }
+  };
+
+  const getStatusIcon = (status: string): string => {
+    switch (status) {
+      case 'vencido': return '❌';
+      case 'vencendo': return '⚠️';
+      case 'atencao': return '🔶';
+      default: return '✅';
+    }
+  };
 
   const metrics = [
     { 
@@ -45,46 +111,12 @@ export default function Dashboard() {
     },
     { 
       label: 'Próx. Vencimento', 
-      value: '12', 
+      value: loadingExpiring ? '...' : expiringProducts.length.toString(), 
       icon: AlertTriangle,
       color: 'from-red-500 to-orange-500'
     }
   ];
 
-  const expiringProducts = [
-    { 
-      name: 'Dipirona 500mg', 
-      expiryDate: '15/01/2024', 
-      daysLeft: 30, 
-      quantity: 45,
-      currentPrice: 'R$ 8,90',
-      suggestedDiscount: '30%'
-    },
-    { 
-      name: 'Paracetamol 750mg', 
-      expiryDate: '28/01/2024', 
-      daysLeft: 43, 
-      quantity: 67,
-      currentPrice: 'R$ 12,50',
-      suggestedDiscount: '20%'
-    },
-    { 
-      name: 'Vitamina C', 
-      expiryDate: '05/02/2024', 
-      daysLeft: 51, 
-      quantity: 23,
-      currentPrice: 'R$ 15,00',
-      suggestedDiscount: '15%'
-    },
-    { 
-      name: 'Xarope Expectorante', 
-      expiryDate: '20/02/2024', 
-      daysLeft: 66, 
-      quantity: 12,
-      currentPrice: 'R$ 22,00',
-      suggestedDiscount: '10%'
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -151,34 +183,69 @@ export default function Dashboard() {
               Produtos Próximos da Validade
             </h3>
             <div className="space-y-3">
-              {expiringProducts.map((product, index) => (
-                <div key={index} className="p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-all border border-gray-600">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm text-white">{product.name}</h4>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-300">
-                        <span>Validade: {product.expiryDate}</span>
-                        <span className={`font-semibold ${
-                          product.daysLeft < 45 ? 'text-red-400' : 'text-yellow-400'
-                        }`}>
-                          {product.daysLeft} dias
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 mt-2 text-xs">
-                        <span className="text-gray-300">Qtd: {product.quantity}</span>
-                        <span className="text-gray-300">Preço: {product.currentPrice}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs border border-green-500/30">
-                        <Tag className="w-3 h-3" />
-                        <span>{product.suggestedDiscount}</span>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">desconto sugerido</p>
-                    </div>
-                  </div>
+              {loadingExpiring ? (
+                <div className="p-4 bg-gray-700/50 rounded-lg">
+                  <p className="text-gray-400 text-sm">Carregando produtos...</p>
                 </div>
-              ))}
+              ) : expiringProducts.length === 0 ? (
+                <div className="p-4 bg-gray-700/50 rounded-lg">
+                  <p className="text-gray-400 text-sm">Nenhum produto próximo ao vencimento</p>
+                </div>
+              ) : (
+                expiringProducts.map((product, index) => {
+                  return (
+                    <div key={product.id} className="p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-all border border-gray-600">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm">{getStatusIcon(product.status_validade)}</span>
+                            <h4 className="font-medium text-sm text-white">{product.nome}</h4>
+                          </div>
+                          
+                          {product.principio_ativo && (
+                            <p className="text-xs text-gray-400 mb-1">{product.principio_ativo}</p>
+                          )}
+                          
+                          <div className="flex items-center gap-4 mt-1 text-xs text-gray-300">
+                            <span>Validade: {new Date(product.validade).toLocaleDateString('pt-BR')}</span>
+                            <span className={`font-semibold ${
+                              product.dias_para_vencer < 0 ? 'text-red-400' :
+                              product.dias_para_vencer <= 7 ? 'text-red-400' :
+                              product.dias_para_vencer <= 30 ? 'text-orange-400' : 'text-yellow-400'
+                            }`}>
+                              {product.dias_para_vencer < 0 ? 'Vencido' : `${product.dias_para_vencer} dias`}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 mt-2 text-xs">
+                            <span className="text-gray-300">Estoque: {product.estoque_atual}</span>
+                            <span className="text-gray-300">Preço: {formatPrice(product.preco_venda)}</span>
+                            {product.lote && <span className="text-gray-400">Lote: {product.lote}</span>}
+                          </div>
+                          
+                          {product.valor_total_estoque && (
+                            <div className="text-xs text-gray-400 mt-1">
+                              Valor total: {formatPrice(product.valor_total_estoque)}
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="text-right">
+                          {product.urgencia && (
+                            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs border ${getUrgencyColor(product.urgencia)}`}>
+                              <AlertTriangle className="w-3 h-3" />
+                              <span className="capitalize">{product.urgencia}</span>
+                            </div>
+                          )}
+                          {product.recomendacao && (
+                            <p className="text-xs text-gray-400 mt-1 max-w-24 text-right">{product.recomendacao}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
             <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
               <p className="text-xs text-blue-300">

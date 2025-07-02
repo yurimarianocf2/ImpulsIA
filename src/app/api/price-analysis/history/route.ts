@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY!
 )
 
 export async function GET(request: NextRequest) {
@@ -22,14 +22,31 @@ export async function GET(request: NextRequest) {
     }
 
     let query = supabase
-      .from('v_relatorio_analises_preco')
-      .select('*')
+      .from('analises_preco_consolidada')
+      .select(`
+        id,
+        medicamento_id,
+        farmacia_id,
+        preco_local,
+        preco_medio_mercado,
+        preco_minimo_mercado,
+        preco_maximo_mercado,
+        posicao_competitiva,
+        percentil_preco,
+        margem_atual,
+        margem_sugerida,
+        recomendacao_preco,
+        recomendacao_descricao,
+        confidence_score,
+        created_at,
+        medicamentos!inner(nome, categoria, principio_ativo)
+      `)
       .eq('farmacia_id', farmacia_id)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
     if (produto_id) {
-      query = query.eq('produto_id', produto_id)
+      query = query.eq('medicamento_id', produto_id)
     }
 
     const { data, error } = await query

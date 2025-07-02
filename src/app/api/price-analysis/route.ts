@@ -3,7 +3,7 @@ import { PriceAnalyzer } from '@/lib/price-analyzer'
 
 export async function POST(request: NextRequest) {
   try {
-    const { farmacia_id, medicamento, estado, useMockData } = await request.json()
+    const { farmacia_id, medicamento, estado } = await request.json()
 
     // Validar parâmetros obrigatórios
     if (!farmacia_id || !medicamento) {
@@ -13,14 +13,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Criar instância do analisador
-    const analyzer = new PriceAnalyzer(farmacia_id, useMockData)
+    console.log(`🔍 Analisando preços para "${medicamento}" na farmácia ${farmacia_id}`)
+
+    // Criar instância do analisador - APENAS DADOS REAIS
+    const analyzer = new PriceAnalyzer(farmacia_id)
 
     // Realizar análise de preços
-    const analise = await analyzer.analisarPrecos(medicamento, estado || 'SP', useMockData)
+    const analise = await analyzer.analisarPrecos(medicamento, estado || 'SP')
 
     // Salvar no banco de dados
     await analyzer.salvarAnalise(analise)
+
+    console.log(`✅ Análise concluída para ${analise.produto_local.nome}`)
 
     return NextResponse.json({
       success: true,
@@ -28,14 +32,14 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Erro na análise de preços:', error)
+    console.error('❌ Erro na análise de preços:', error)
     
     return NextResponse.json(
       { 
-        error: 'Erro interno do servidor', 
+        error: 'Produto não encontrado ou erro interno', 
         message: error instanceof Error ? error.message : 'Erro desconhecido'
       },
-      { status: 500 }
+      { status: 404 }
     )
   }
 }
@@ -54,8 +58,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    console.log(`🔍 GET - Analisando preços para "${medicamento}" na farmácia ${farmacia_id}`)
+
     const analyzer = new PriceAnalyzer(farmacia_id)
     const analise = await analyzer.analisarPrecos(medicamento, estado)
+
+    console.log(`✅ GET - Análise concluída para ${analise.produto_local.nome}`)
 
     return NextResponse.json({
       success: true,
@@ -63,14 +71,14 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Erro na análise de preços:', error)
+    console.error('❌ GET - Erro na análise de preços:', error)
     
     return NextResponse.json(
       { 
-        error: 'Erro interno do servidor',
+        error: 'Produto não encontrado ou erro interno',
         message: error instanceof Error ? error.message : 'Erro desconhecido'
       },
-      { status: 500 }
+      { status: 404 }
     )
   }
 }

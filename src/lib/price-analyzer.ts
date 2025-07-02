@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY!
 )
 
 interface Product {
@@ -14,6 +14,8 @@ interface Product {
   estoque_atual: number
   principio_ativo?: string
   fabricante?: string
+  categoria?: string
+  subcategoria?: string
 }
 
 interface ExternalPrice {
@@ -25,33 +27,43 @@ interface ExternalPrice {
 }
 
 interface PriceAnalysis {
-  produto_local: Product | null
+  produto_local: Product
   precos_externos: ExternalPrice[]
   preco_medio_mercado: number
   posicao_competitiva: 'abaixo' | 'medio' | 'acima'
   recomendacao: string
   margem_atual: number
+  farmacia_info: {
+    nome: string
+    cidade: string
+    estado: string
+  }
 }
 
 export class PriceAnalyzer {
   private farmaciaId: string
-  private useMockData: boolean
 
-  constructor(farmaciaId: string, useMockData: boolean = false) {
+  constructor(farmaciaId: string) {
     this.farmaciaId = farmaciaId
-    this.useMockData = useMockData || process.env.USE_MOCK_DATA === 'true'
   }
 
-  async buscarProdutoLocal(termo: string): Promise<Product | null> {
-    // Se modo mock estiver ativo ou Supabase indisponível, usar dados mock
-    if (this.useMockData) {
-      return this.getMockProduct(termo)
-    }
-
+  async buscarProdutoLocal(termo: string): Promise<Product> {
     try {
+      console.log(`🔍 Buscando "${termo}" na farmácia ${this.farmaciaId} na tabela produtos`)
+      
       const { data, error } = await supabase
         .from('produtos')
-        .select('*')
+        .select(`
+          id,
+          nome,
+          preco_venda,
+          preco_custo,
+          margem_lucro,
+          estoque_atual,
+          principio_ativo,
+          laboratorio,
+          categoria
+        `)
         .eq('farmacia_id', this.farmaciaId)
         .eq('ativo', true)
         .or(`nome.ilike.%${termo}%,principio_ativo.ilike.%${termo}%,codigo_barras.eq.${termo}`)
@@ -60,69 +72,59 @@ export class PriceAnalyzer {
 
       if (error) {
         console.error('Erro ao buscar produto:', error)
-        // Fallback para dados mock se Supabase falhar
-        return this.getMockProduct(termo)
+        throw new Error(`Produto "${termo}" não encontrado no estoque da farmácia`)
       }
 
-      return data
+      if (!data) {
+        throw new Error(`Produto "${termo}" não encontrado no estoque da farmácia`)
+      }
+
+      // Map laboratorio to fabricante to maintain interface compatibility
+      const product: Product = {
+        ...data,
+        fabricante: data.laboratorio,
+        subcategoria: data.categoria // Use categoria as subcategoria fallback
+      }
+
+      console.log('✅ Produto encontrado:', product.nome, '- R$', product.preco_venda)
+      return product
     } catch (error) {
       console.error('Erro na busca local:', error)
-      // Fallback para dados mock se Supabase falhar
-      return this.getMockProduct(termo)
+      throw new Error(`Produto "${termo}" não encontrado no estoque da farmácia`)
     }
   }
 
-  private getMockProduct(termo: string): Product | null {
-    const produtosMock = [
-      {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        nome: 'Dipirona Monoidratada 500mg',
-        preco_venda: 12.50,
-        preco_custo: 8.00,
-        margem_lucro: 36.00,
-        estoque_atual: 150,
-        principio_ativo: 'Dipirona Monoidratada',
-        fabricante: 'EMS Genérico'
-      },
-      {
-        id: '123e4567-e89b-12d3-a456-426614174001',
-        nome: 'Paracetamol 750mg',
-        preco_venda: 8.90,
-        preco_custo: 5.50,
-        margem_lucro: 38.20,
-        estoque_atual: 200,
-        principio_ativo: 'Paracetamol',
-        fabricante: 'Medley'
-      },
-      {
-        id: '123e4567-e89b-12d3-a456-426614174002',
-        nome: 'Ibuprofeno 600mg',
-        preco_venda: 15.80,
-        preco_custo: 10.20,
-        margem_lucro: 35.44,
-        estoque_atual: 80,
-        principio_ativo: 'Ibuprofeno',
-        fabricante: 'Germed'
-      }
-    ]
+  async buscarInfoFarmacia(): Promise<{nome: string, cidade: string, estado: string}> {
+    try {
+      const { data, error } = await supabase
+        .from('farmacias')
+        .select('nome, endereco')
+        .eq('id', this.farmaciaId)
+        .single()
 
-    const termoLower = termo.toLowerCase()
-    return produtosMock.find(p => 
-      p.nome.toLowerCase().includes(termoLower) || 
-      (p.principio_ativo && p.principio_ativo.toLowerCase().includes(termoLower))
-    ) || null
+      if (error || !data) {
+        return { nome: 'Farmácia', cidade: 'Cidade', estado: 'UF' }
+      }
+
+      const endereco = data.endereco as any
+      return {
+        nome: data.nome,
+        cidade: endereco?.cidade || 'Cidade',
+        estado: endereco?.uf || 'UF'
+      }
+    } catch (error) {
+      console.error('Erro ao buscar info da farmácia:', error)
+      return { nome: 'Farmácia', cidade: 'Cidade', estado: 'UF' }
+    }
   }
 
-  async buscarPrecosExternos(nomeMedicamento: string, estado: string = 'SP', useMockData?: boolean): Promise<ExternalPrice[]> {
+  async buscarPrecosExternos(nomeMedicamento: string, estado: string = 'SP'): Promise<ExternalPrice[]> {
     const { ExternalPriceManager } = await import('./external-price-apis')
     const priceManager = new ExternalPriceManager()
     
-    // Se useMockData foi especificado, configurar o modo
-    if (useMockData !== undefined) {
-      priceManager.setMockDataMode(useMockData)
-    }
-    
     try {
+      // Garantir que não usa mock data
+      priceManager.setMockDataMode(false)
       return await priceManager.searchAllSources(nomeMedicamento, estado)
     } catch (error) {
       console.error('Erro ao buscar preços externos:', error)
@@ -130,21 +132,22 @@ export class PriceAnalyzer {
     }
   }
 
-  async analisarPrecos(termo: string, estado: string = 'SP', useMockData?: boolean): Promise<PriceAnalysis> {
-    // Configurar modo mock se especificado
-    if (useMockData !== undefined) {
-      this.useMockData = useMockData
-    }
-
-    // Buscar produto local
+  async analisarPrecos(termo: string, estado: string = 'SP'): Promise<PriceAnalysis> {
+    // Buscar informações da farmácia
+    const farmaciaInfo = await this.buscarInfoFarmacia()
+    
+    // Buscar produto local - OBRIGATÓRIO encontrar
     const produtoLocal = await this.buscarProdutoLocal(termo)
     
     if (!produtoLocal) {
-      throw new Error('Produto não encontrado no estoque local')
+      throw new Error(`Produto "${termo}" não encontrado no estoque da farmácia ${farmaciaInfo.nome}`)
     }
 
+    console.log(`✅ Produto encontrado: ${produtoLocal.nome} - R$ ${produtoLocal.preco_venda}`)
+
     // Buscar preços externos
-    const precosExternos = await this.buscarPrecosExternos(produtoLocal.nome, estado, this.useMockData)
+    const precosExternos = await this.buscarPrecosExternos(produtoLocal.nome, estado)
+    console.log(`📊 Encontrados ${precosExternos.length} preços externos`)
     
     // Calcular preço médio do mercado
     const precoMedioMercado = precosExternos.length > 0 
@@ -183,7 +186,8 @@ export class PriceAnalyzer {
       preco_medio_mercado: precoMedioMercado,
       posicao_competitiva: posicaoCompetitiva,
       recomendacao,
-      margem_atual: margemAtual
+      margem_atual: margemAtual,
+      farmacia_info: farmaciaInfo
     }
   }
 
@@ -214,29 +218,38 @@ export class PriceAnalyzer {
   }
 
   async salvarAnalise(analise: PriceAnalysis): Promise<void> {
-    // Se modo mock estiver ativo, apenas log
-    if (this.useMockData) {
-      console.log('Mock: Análise salva com sucesso')
-      return
-    }
-
     try {
-      await supabase
+      // Try to save to analises_preco table first, if it doesn't exist, skip
+      const { error } = await supabase
         .from('analises_preco')
         .insert({
           farmacia_id: this.farmaciaId,
-          produto_id: analise.produto_local?.id,
-          preco_local: analise.produto_local?.preco_venda,
+          produto_id: analise.produto_local.id,
+          preco_local: analise.produto_local.preco_venda,
           preco_medio_mercado: analise.preco_medio_mercado,
           posicao_competitiva: analise.posicao_competitiva,
           margem_atual: analise.margem_atual,
-          precos_externos: analise.precos_externos,
           recomendacao: analise.recomendacao,
+          precos_externos: analise.precos_externos,
           created_at: new Date().toISOString()
         })
+
+      if (error && error.code === '42P01') {
+        // Table doesn't exist, just log the analysis instead
+        console.log('📊 Análise completa (tabela analises_preco não existe):', {
+          produto: analise.produto_local.nome,
+          preco_local: analise.produto_local.preco_venda,
+          preco_medio_mercado: analise.preco_medio_mercado,
+          posicao: analise.posicao_competitiva,
+          recomendacao: analise.recomendacao
+        })
+      } else if (error) {
+        console.error('Erro ao salvar análise:', error)
+      } else {
+        console.log('✅ Análise salva no banco de dados')
+      }
     } catch (error) {
       console.error('Erro ao salvar análise:', error)
-      // Não falhar se não conseguir salvar
     }
   }
 }
