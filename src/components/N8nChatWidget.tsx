@@ -60,9 +60,9 @@ export function N8nChatWidget() {
         onClick={toggleChat}
         className={cn(
           "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300",
-          "bg-blue-600 hover:bg-blue-700 text-white",
+          "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600",
           "hover:shadow-xl hover:scale-105",
-          isOpen && "bg-blue-700"
+          isOpen && "bg-gray-700"
         )}
         aria-label="Abrir chat"
       >
@@ -86,16 +86,16 @@ export function N8nChatWidget() {
           isOpen ? "opacity-100 visible scale-100 translate-y-0" : "opacity-0 invisible scale-95 translate-y-5"
         )}
         style={{
-          '--chat-color-primary': '#2563eb',
-          '--chat-color-primary-hover': '#1d4ed8',
-          '--chat-color-secondary': '#f3f4f6',
-          '--chat-color-secondary-hover': '#e5e7eb',
-          '--chat-color-text': '#111827',
-          '--chat-color-text-light': '#6b7280',
-          '--chat-color-background': '#ffffff',
-          '--chat-color-input-background': '#f9fafb',
-          '--chat-color-input-border': '#e5e7eb',
-          '--chat-color-input-border-focus': '#2563eb',
+          '--chat-color-primary': '#3b82f6',
+          '--chat-color-primary-hover': '#2563eb',
+          '--chat-color-secondary': '#374151',
+          '--chat-color-secondary-hover': '#4b5563',
+          '--chat-color-text': '#f9fafb',
+          '--chat-color-text-light': '#d1d5db',
+          '--chat-color-background': '#1f2937',
+          '--chat-color-input-background': '#374151',
+          '--chat-color-input-border': '#4b5563',
+          '--chat-color-input-border-focus': '#3b82f6',
           '--chat-border-radius': '0.75rem',
           '--chat-font-family': 'Inter, system-ui, sans-serif',
         } as React.CSSProperties}
@@ -120,9 +120,10 @@ export function N8nChatWidget() {
         }
 
         #n8n-chat-container .n8n-chat__header {
-          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+          background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
           color: white !important;
           padding: 1rem !important;
+          border-bottom: 1px solid #4b5563 !important;
         }
 
         #n8n-chat-container .n8n-chat__header h1 {
@@ -212,12 +213,12 @@ export function N8nChatWidget() {
         }
 
         #n8n-chat-container .n8n-chat__messages::-webkit-scrollbar-thumb {
-          background: #e5e7eb;
+          background: #4b5563;
           border-radius: 3px;
         }
 
         #n8n-chat-container .n8n-chat__messages::-webkit-scrollbar-thumb:hover {
-          background: #d1d5db;
+          background: #6b7280;
         }
 
         /* Responsividade para mobile */
