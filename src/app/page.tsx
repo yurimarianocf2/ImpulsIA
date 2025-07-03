@@ -11,10 +11,15 @@ import {
   Calendar,
   Tag,
   Percent,
-  Calculator
+  Calculator,
+  Plus,
+  Play,
+  Pause
 } from 'lucide-react';
 import { PriceAnalyzer } from '@/components/price-analyzer-component';
-import { getCurrentFarmaciaId } from '@/lib/farmacia-context';
+import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
+import { useTopProducts } from '@/hooks/useTopProducts';
+import { useFarmacia } from '@/hooks/useFarmacia';
 
 interface ExpiringProduct {
   id: string;
@@ -30,12 +35,29 @@ interface ExpiringProduct {
   urgencia?: string;
   valor_total_estoque?: number;
   recomendacao?: string;
+  promocao_ativa?: boolean;
+  tipo_promocao?: string;
+}
+
+interface PromoOption {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
 }
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [expiringProducts, setExpiringProducts] = useState<ExpiringProduct[]>([]);
   const [loadingExpiring, setLoadingExpiring] = useState(true);
+  const [showPromoModal, setShowPromoModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ExpiringProduct | null>(null);
+  
+  // Usar hooks para dados reais
+  const farmaciaId = '550e8400-e29b-41d4-a716-446655440000'; // Default farmacia ID
+  const { metrics: dashboardMetrics, loading: loadingMetrics } = useDashboardMetrics(farmaciaId);
+  const { products: topProducts, loading: loadingTopProducts } = useTopProducts(farmaciaId);
+  const { farmacia, loading: loadingFarmacia } = useFarmacia(farmaciaId);
   
   useEffect(() => {
     setCurrentTime(new Date());
@@ -51,7 +73,6 @@ export default function Dashboard() {
     try {
       setLoadingExpiring(true);
       // Using farmacia context instead of hardcoded value
-      const farmaciaId = getCurrentFarmaciaId();
       const response = await fetch(`/api/expiring-products?farmacia_id=${farmaciaId}`);
       if (response.ok) {
         const data = await response.json();
@@ -90,22 +111,71 @@ export default function Dashboard() {
     }
   };
 
+  const calculateSuggestedDiscount = (diasParaVencer: number, urgencia: string): number => {
+    if (diasParaVencer < 0) return 50; // Produto vencido
+    if (diasParaVencer <= 7) return 40; // Crítico
+    if (diasParaVencer <= 15) return 30; // Alta urgência
+    if (diasParaVencer <= 30) return 20; // Média urgência
+    if (diasParaVencer <= 60) return 15; // Baixa urgência
+    return 10; // Preventivo
+  };
+
+  const promoOptions: PromoOption[] = [
+    { id: 'relampago', label: 'Relâmpago', description: 'Promoção rápida de 24h', icon: '⚡' },
+    { id: 'queima', label: 'Queima de Estoque', description: 'Liquidação total do lote', icon: '🔥' },
+    { id: 'recorrente', label: 'Recorrente', description: 'Promoção semanal', icon: '🔄' },
+    { id: 'contraproposta', label: 'Contraproposta', description: 'Negociação personalizada', icon: '💬' }
+  ];
+
+  const handleCreatePromo = (product: ExpiringProduct) => {
+    setSelectedProduct(product);
+    setShowPromoModal(true);
+  };
+
+  const handleSelectPromo = (promoType: string) => {
+    if (selectedProduct) {
+      // Aqui você implementaria a lógica para ativar a promoção
+      console.log('Ativando promoção:', promoType, 'para produto:', selectedProduct.nome);
+      
+      // Simular ativação da promoção
+      setExpiringProducts(prev => 
+        prev.map(p => 
+          p.id === selectedProduct.id 
+            ? { ...p, promocao_ativa: true, tipo_promocao: promoType }
+            : p
+        )
+      );
+    }
+    setShowPromoModal(false);
+    setSelectedProduct(null);
+  };
+
+  const togglePromo = (product: ExpiringProduct) => {
+    setExpiringProducts(prev => 
+      prev.map(p => 
+        p.id === product.id 
+          ? { ...p, promocao_ativa: !p.promocao_ativa }
+          : p
+      )
+    );
+  };
+
   const metrics = [
     { 
       label: 'Vendas Hoje', 
-      value: 'R$ 847', 
+      value: loadingMetrics ? '...' : dashboardMetrics?.vendas_hoje || 'R$ 0', 
       icon: ShoppingCart,
       color: 'from-green-500 to-emerald-500'
     },
     { 
       label: 'Produtos', 
-      value: '247', 
+      value: loadingMetrics ? '...' : dashboardMetrics?.produtos_total || '0', 
       icon: Package,
       color: 'from-blue-500 to-cyan-500'
     },
     { 
       label: 'Clientes', 
-      value: '89', 
+      value: loadingMetrics ? '...' : dashboardMetrics?.clientes_total || '0', 
       icon: Users,
       color: 'from-purple-500 to-pink-500'
     },
@@ -193,6 +263,7 @@ export default function Dashboard() {
                 </div>
               ) : (
                 expiringProducts.map((product, index) => {
+                  const suggestedDiscount = calculateSuggestedDiscount(product.dias_para_vencer, product.urgencia || '');
                   return (
                     <div key={product.id} className="p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-all border border-gray-600">
                       <div className="flex items-start justify-between">
@@ -230,16 +301,42 @@ export default function Dashboard() {
                           )}
                         </div>
                         
-                        <div className="text-right">
-                          {product.urgencia && (
-                            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs border ${getUrgencyColor(product.urgencia)}`}>
-                              <AlertTriangle className="w-3 h-3" />
-                              <span className="capitalize">{product.urgencia}</span>
+                        <div className="text-right space-y-2">
+                          {/* Desconto Sugerido */}
+                          <div className="flex items-center gap-1 px-3 py-1 rounded-full text-xs border border-green-500/30 bg-green-500/10">
+                            <Tag className="w-3 h-3 text-green-400" />
+                            <span className="text-green-400 font-bold">{suggestedDiscount}%</span>
+                          </div>
+                          
+                          {/* Status da Promoção */}
+                          {product.promocao_ativa && (
+                            <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs border border-green-500/30 bg-green-500/10">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <span className="text-green-400 text-xs">{product.tipo_promocao || 'Ativa'}</span>
                             </div>
                           )}
-                          {product.recomendacao && (
-                            <p className="text-xs text-gray-400 mt-1 max-w-24 text-right">{product.recomendacao}</p>
-                          )}
+                          
+                          {/* Botão Criar/Gerenciar Promoção */}
+                          <button
+                            onClick={() => product.promocao_ativa ? togglePromo(product) : handleCreatePromo(product)}
+                            className={`w-full px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${
+                              product.promocao_ativa 
+                                ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                                : 'bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30'
+                            }`}
+                          >
+                            {product.promocao_ativa ? (
+                              <>
+                                <Pause className="w-3 h-3" />
+                                <span>Pausar</span>
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="w-3 h-3" />
+                                <span>Criar Promoção</span>
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -276,12 +373,12 @@ export default function Dashboard() {
             Produtos com Melhor Margem
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[
-              { name: 'Vitamina D', margin: '68%', price: 'R$ 35,00', sales: '42/mês' },
-              { name: 'Ômega 3', margin: '62%', price: 'R$ 45,00', sales: '38/mês' },
-              { name: 'Protetor Solar FPS60', margin: '58%', price: 'R$ 55,00', sales: '25/mês' },
-              { name: 'Colágeno Hidrolisado', margin: '55%', price: 'R$ 65,00', sales: '30/mês' }
-            ].map((product, index) => (
+            {(loadingTopProducts ? [
+              { name: 'Carregando...', margin: '...', price: '...', sales: '...' },
+              { name: 'Carregando...', margin: '...', price: '...', sales: '...' },
+              { name: 'Carregando...', margin: '...', price: '...', sales: '...' },
+              { name: 'Carregando...', margin: '...', price: '...', sales: '...' }
+            ] : topProducts).map((product, index) => (
               <div key={index} className="p-4 bg-gray-700/50 rounded-lg border border-gray-600 hover:bg-gray-700/70 transition-all">
                 <h4 className="font-medium text-sm mb-2 text-white">{product.name}</h4>
                 <div className="flex items-center justify-between mb-1">
@@ -297,6 +394,44 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
+      
+      {/* Modal de Criação de Promoção */}
+      {showPromoModal && selectedProduct && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-700">
+            <h3 className="text-lg font-semibold mb-4 text-white">
+              Criar Promoção - {selectedProduct.nome}
+            </h3>
+            
+            <div className="space-y-3 mb-6">
+              {promoOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleSelectPromo(option.id)}
+                  className="w-full p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg border border-gray-600 hover:border-gray-500 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{option.icon}</span>
+                    <div>
+                      <h4 className="font-medium text-white">{option.label}</h4>
+                      <p className="text-xs text-gray-400">{option.description}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowPromoModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
