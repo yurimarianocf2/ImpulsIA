@@ -30,6 +30,14 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Additional security files
+*.key
+*.pem
+secrets/
+config/secrets.json
+.secrets
+credentials.json
+
 # Vercel
 .vercel
 

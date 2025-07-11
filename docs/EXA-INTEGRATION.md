@@ -2,7 +2,7 @@
 
 ## Resumo da Implementação
 
-Substituí as APIs da CliqueFarma e ConsultaRemedios por uma implementação usando **EXA Search API**, que faz pesquisas inteligentes na internet para encontrar preços de medicamentos em farmácias online.
+Implementei uma solução usando **EXA Search API**, que faz pesquisas inteligentes na internet para encontrar preços de medicamentos em farmácias online.
 
 ## O que foi implementado
 
@@ -22,16 +22,15 @@ Substituí as APIs da CliqueFarma e ConsultaRemedios por uma implementação usa
 ### 2. Domínios de Farmácias Incluídos
 
 A busca é focada nos principais sites de farmácias brasileiras:
-- Drogasil (drogasil.com.br)
-- Droga Raia (drogaraia.com.br)
-- Ultrafarma (ultrafarma.com.br)
-- Drogas Mil (drogasmil.com.br)
-- Pague Menos (paguemenos.com.br)
-- Drogaria Venâncio (drogariavenancio.com.br)
-- Drogaria São Paulo (drogariasaopaulo.com.br)
-- Farmácia Indiana (farmaciaindiana.com.br)
-- CliqueFarma (cliquefarma.com.br)
-- ConsultaRemedios (consultaremedios.com.br)
+- Farmácia A (farmacia-a.example.com)
+- Farmácia B (farmacia-b.example.com)
+- Farmácia C (farmacia-c.example.com)
+- Drogaria Central (drogaria-central.example.com)
+- Farmácia Norte (farmacia-norte.example.com)
+- Drogaria Sul (drogaria-sul.example.com)
+- Farmácia Leste (farmacia-leste.example.com)
+- Farmácia Oeste (farmacia-oeste.example.com)
+- Farmácia Online (farmacia-online.example.com)
 
 ### 3. Algoritmo de Busca Inteligente
 
@@ -154,12 +153,12 @@ const precos = await exaApi.search('Dipirona 500mg', 'SP')
 // Resultado esperado:
 [
   {
-    farmacia: "Drogasil",
+    farmacia: "Farmácia A",
     preco: 12.50,
     disponivel: true,
     estado: "SP", 
     fonte: "exa_search",
-    url: "https://www.drogasil.com.br/dipirona-500mg"
+    url: "https://www.farmacia-a.example.com/dipirona-500mg"
   },
   // ... mais resultados
 ]

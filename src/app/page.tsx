@@ -14,12 +14,17 @@ import {
   Calculator,
   Plus,
   Play,
-  Pause
+  Pause,
+  Settings,
+  LogOut,
+  UserCircle,
+  ChevronDown
 } from 'lucide-react';
 import { PriceAnalyzer } from '@/components/price-analyzer-component';
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
 import { useTopProducts } from '@/hooks/useTopProducts';
 import { useFarmacia } from '@/hooks/useFarmacia';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ExpiringProduct {
   id: string;
@@ -52,9 +57,11 @@ export default function Dashboard() {
   const [loadingExpiring, setLoadingExpiring] = useState(true);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ExpiringProduct | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
   // Usar hooks para dados reais
-  const farmaciaId = '550e8400-e29b-41d4-a716-446655440000'; // Default farmacia ID
+  const { user, signOut } = useAuth();
+  const farmaciaId = user?.farmacia_id || '550e8400-e29b-41d4-a716-446655440000';
   const { metrics: dashboardMetrics, loading: loadingMetrics } = useDashboardMetrics(farmaciaId);
   const { products: topProducts, loading: loadingTopProducts } = useTopProducts(farmaciaId);
   const { farmacia, loading: loadingFarmacia } = useFarmacia(farmaciaId);
@@ -68,6 +75,18 @@ export default function Dashboard() {
   useEffect(() => {
     fetchExpiringProducts();
   }, []);
+
+  // Fechar menu do usuário quando clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showUserMenu && !(event.target as Element).closest('.user-menu')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showUserMenu]);
 
   const fetchExpiringProducts = async () => {
     try {
@@ -209,8 +228,50 @@ export default function Dashboard() {
               <Package className="w-4 h-4" />
               <span>Upload Produtos</span>
             </a>
+            
             <div className="text-sm text-gray-400">
               {currentTime?.toLocaleString('pt-BR') || '--:--:--'}
+            </div>
+            
+            {/* User Menu */}
+            <div className="relative user-menu">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center space-x-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                <UserCircle className="w-4 h-4" />
+                <span className="hidden sm:inline">{user?.email || 'Usuário'}</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-gray-800 rounded-lg shadow-lg border border-gray-700 z-50">
+                  <div className="p-3 border-b border-gray-700">
+                    <p className="text-sm font-medium text-white">{user?.email}</p>
+                    <p className="text-xs text-gray-400">{user?.farmacia_nome}</p>
+                    <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
+                  </div>
+                  <div className="py-1">
+                    <button
+                      onClick={() => setShowUserMenu(false)}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white flex items-center space-x-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Configurações</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        signOut();
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-600 hover:text-white flex items-center space-x-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sair</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

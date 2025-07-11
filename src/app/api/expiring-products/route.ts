@@ -1,9 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { withAuth, PERMISSIONS } from '@/lib/auth';
 
-export async function GET(request: Request) {
+async function handleExpiringProducts(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const farmaciaId = searchParams.get('farmacia_id') || '550e8400-e29b-41d4-a716-446655440000';
+  
+  // Obter farmacia_id dos headers (definido pelo middleware de auth)
+  const farmaciaId = request.headers.get('x-farmacia-id');
+  
+  if (!farmaciaId) {
+    return NextResponse.json(
+      { error: 'farmacia_id não encontrado no contexto de autenticação' },
+      { status: 400 }
+    );
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -16,7 +26,7 @@ export async function GET(request: Request) {
 
   try {
     // Primeiro tenta usar o esquema novo (medicamentos)
-    let { data, error } = await supabase
+    let { data, error }: { data: any[] | null, error: any } = await supabase
       .from('medicamentos')
       .select('*')
       .eq('farmacia_id', farmaciaId)
@@ -75,7 +85,7 @@ export async function GET(request: Request) {
             dias_para_vencer: Math.ceil((new Date(product.data_validade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
             status_validade: new Date(product.data_validade) < new Date() ? 'vencido' : 
                             new Date(product.data_validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? 'vencendo' : 'ok'
-          }));
+          })) || null;
         }
       } else {
         data = resultValidade.data?.map(product => ({
@@ -83,23 +93,111 @@ export async function GET(request: Request) {
           dias_para_vencer: Math.ceil((new Date(product.validade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
           status_validade: new Date(product.validade) < new Date() ? 'vencido' : 
                           new Date(product.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? 'vencendo' : 'ok'
-        }));
+        })) || null;
       }
     } else if (error) {
       throw error;
     }
 
+    // Função para calcular desconto inteligente baseado em múltiplos fatores
+    const calcularDescontoInteligente = (medicamento: any) => {
+      const diasVencer = medicamento.dias_para_vencer;
+      const estoque = medicamento.estoque_atual || 0;
+      const margemLucro = medicamento.margem_lucro || 0;
+      const precoVenda = medicamento.preco_venda || 0;
+      const valorTotalEstoque = estoque * precoVenda;
+
+      // Se já vencido, desconto máximo para liquidar
+      if (diasVencer < 0) {
+        const descontoBase = Math.min(70, margemLucro * 0.8); // Até 70% ou 80% da margem
+        return {
+          desconto: Math.round(descontoBase),
+          estrategia: 'LIQUIDAÇÃO',
+          justificativa: 'Produto vencido - liquidar imediatamente'
+        };
+      }
+
+      // Fatores de cálculo
+      let descontoBase = 0;
+      let estrategia = '';
+      let justificativa = '';
+
+      // 1. Fator URGÊNCIA (dias para vencer)
+      if (diasVencer <= 3) {
+        descontoBase = 50; // Desconto alto para urgência extrema
+        estrategia = 'QUEIMA DE ESTOQUE';
+      } else if (diasVencer <= 7) {
+        descontoBase = 35; // Desconto alto para urgência crítica
+        estrategia = 'PROMOÇÃO FLASH';
+      } else if (diasVencer <= 15) {
+        descontoBase = 25; // Desconto médio para urgência alta
+        estrategia = 'PROMOÇÃO SEMANAL';
+      } else if (diasVencer <= 30) {
+        descontoBase = 15; // Desconto baixo para urgência média
+        estrategia = 'PROMOÇÃO MENSAL';
+      } else {
+        descontoBase = 5; // Desconto mínimo
+        estrategia = 'MONITORAMENTO';
+      }
+
+      // 2. Fator ESTOQUE (quanto mais estoque, maior o desconto)
+      let fatorEstoque = 1;
+      if (estoque > 100) {
+        fatorEstoque = 1.4; // +40% se estoque muito alto
+        justificativa += 'Alto estoque + ';
+      } else if (estoque > 50) {
+        fatorEstoque = 1.2; // +20% se estoque alto
+        justificativa += 'Estoque elevado + ';
+      } else if (estoque > 20) {
+        fatorEstoque = 1.1; // +10% se estoque médio
+      }
+
+      // 3. Fator VALOR TOTAL (produtos com maior valor em estoque precisam sair mais rápido)
+      if (valorTotalEstoque > 2000) {
+        fatorEstoque *= 1.2; // +20% adicional para alto valor em estoque
+        justificativa += 'Alto valor em estoque + ';
+      } else if (valorTotalEstoque > 1000) {
+        fatorEstoque *= 1.1; // +10% adicional
+      }
+
+      // 4. Limitar desconto pela margem de lucro (não vender no prejuízo)
+      const descontoCalculado = Math.round(descontoBase * fatorEstoque);
+      const descontoFinal = Math.min(descontoCalculado, margemLucro * 0.9); // Máximo 90% da margem
+
+      // Finalizar justificativa
+      justificativa += `${diasVencer} dias restantes`;
+      if (descontoFinal !== descontoCalculado) {
+        justificativa += ' (limitado pela margem)';
+      }
+
+      return {
+        desconto: Math.max(5, Math.round(descontoFinal)), // Mínimo 5%
+        estrategia,
+        justificativa: justificativa.trim()
+      };
+    };
+
     // Enriquecer dados com informações calculadas
-    const enrichedData = data?.map(medicamento => ({
-      ...medicamento,
-      urgencia: medicamento.dias_para_vencer <= 7 ? 'critica' : 
-                medicamento.dias_para_vencer <= 30 ? 'alta' : 'media',
-      valor_total_estoque: medicamento.estoque_atual * medicamento.preco_venda,
-      recomendacao: medicamento.dias_para_vencer < 0 ? 'Retirar do estoque imediatamente' :
-                   medicamento.dias_para_vencer <= 7 ? 'Promover desconto urgente' :
-                   medicamento.dias_para_vencer <= 30 ? 'Considerar promoção' :
-                   'Monitorar regularmente'
-    }));
+    const enrichedData = data?.map(medicamento => {
+      const descontoInfo = calcularDescontoInteligente(medicamento);
+      const precoComDesconto = medicamento.preco_venda * (1 - descontoInfo.desconto / 100);
+      
+      return {
+        ...medicamento,
+        urgencia: medicamento.dias_para_vencer <= 7 ? 'critica' : 
+                  medicamento.dias_para_vencer <= 30 ? 'alta' : 'media',
+        valor_total_estoque: medicamento.estoque_atual * medicamento.preco_venda,
+        // Nova recomendação inteligente com desconto sugerido
+        recomendacao: medicamento.dias_para_vencer < 0 
+          ? `${descontoInfo.estrategia}: Desconto ${descontoInfo.desconto}% (R$ ${precoComDesconto.toFixed(2)})`
+          : `${descontoInfo.estrategia}: Desconto ${descontoInfo.desconto}% (R$ ${precoComDesconto.toFixed(2)})`,
+        // Campos adicionais para análise
+        desconto_sugerido: descontoInfo.desconto,
+        preco_promocional: precoComDesconto,
+        estrategia_venda: descontoInfo.estrategia,
+        justificativa_desconto: descontoInfo.justificativa
+      };
+    });
 
     return NextResponse.json(enrichedData || []);
   } catch (error) {
@@ -110,3 +208,9 @@ export async function GET(request: Request) {
     }, { status: 500 });
   }
 }
+
+// Exportar a função protegida por autenticação
+export const GET = withAuth(handleExpiringProducts, {
+  requireFarmaciaAccess: false, // Já validado pelo middleware
+  requiredPermissions: [PERMISSIONS.PRODUCTS_READ, PERMISSIONS.DASHBOARD_ACCESS]
+});

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../../globals.css";
 
 export const metadata: Metadata = {
-  title: "Simple Test - FarmaBot Pro",
+  title: "Simple Test - FarmacIA",
   description: "Simple test page for debugging.",
 };
 

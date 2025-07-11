@@ -1,4 +1,4 @@
-# 🚀 Como Executar o Projeto - FarmaBot Pro
+# 🚀 Como Executar o Projeto - FarmacIA
 
 ## ❌ Problema Identificado:
 O ambiente WSL/Windows está com conflito no cache do npm/node_modules, impedindo a instalação normal das dependências.

@@ -1,17 +1,16 @@
-# 🤖 FarmaBot Pro - Sistema Completo
+# 🤖 PriceBot - Sistema de Comparação
 
 ## 🎯 Visão Geral
 
-**FarmaBot Pro** é um sistema completo de atendente virtual para farmácias, integrando WhatsApp Business API, n8n para automação e Supabase como banco de dados. O sistema oferece atendimento 24/7, comparação de preços em tempo real e gestão inteligente de estoque.
+**PriceBot** é um sistema de comparação de preços e gestão de inventário, utilizando Next.js e Supabase como banco de dados. O sistema oferece análise de preços em tempo real e gestão de estoque.
 
 ### 🌟 Principais Funcionalidades
 
-- 🤖 **Atendimento Automatizado**: Bot inteligente no WhatsApp
 - 💰 **Comparação de Preços**: Integração com APIs de preços
 - 📊 **Dashboard Analytics**: Métricas em tempo real
-- 🔄 **Automação n8n**: Workflows personalizáveis
-- 📱 **Multi-plataforma**: Web, mobile e WhatsApp
-- 🔐 **Segurança LGPD**: Compliance total com proteção de dados
+- 📱 **Interface Web**: Dashboard responsivo
+- 🔄 **Gestão de Estoque**: Controle básico de inventário
+- 📈 **Relatórios**: Análises de vendas
 
 ## 🏗️ Arquitetura
 

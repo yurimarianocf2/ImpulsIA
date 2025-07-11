@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   try {
     // Primeiro tenta usar o esquema novo (medicamentos)
-    let { data, error } = await supabase
+    let { data, error }: { data: any[] | null, error: any } = await supabase
       .from('medicamentos')
       .select('*')
       .eq('farmacia_id', farmaciaId)
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
             dias_para_vencer: Math.ceil((new Date(product.data_vencimento).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
             status_validade: new Date(product.data_vencimento) < new Date() ? 'vencido' : 
                             new Date(product.data_vencimento) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? 'vencendo' : 'ok'
-          }));
+          })) || null;
         } else {
           data = resultDataValidade.data?.map(product => ({
             ...product,
@@ -75,7 +75,7 @@ export async function GET(request: Request) {
             dias_para_vencer: Math.ceil((new Date(product.data_validade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
             status_validade: new Date(product.data_validade) < new Date() ? 'vencido' : 
                             new Date(product.data_validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? 'vencendo' : 'ok'
-          }));
+          })) || null;
         }
       } else {
         data = resultValidade.data?.map(product => ({
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
           dias_para_vencer: Math.ceil((new Date(product.validade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
           status_validade: new Date(product.validade) < new Date() ? 'vencido' : 
                           new Date(product.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? 'vencendo' : 'ok'
-        }));
+        })) || null;
       }
     } else if (error) {
       throw error;

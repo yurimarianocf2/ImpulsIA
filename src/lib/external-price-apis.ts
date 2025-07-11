@@ -65,10 +65,11 @@ interface ExternalPrice {
   precoPorUnidade?: number // Preço por comprimido/ml/cápsula
 }
 
-export class CliquefarmaAPI implements ExternalPriceAPI {
-  name = 'CliqueFarma'
-  private apiKey = process.env.CLIQUEFARMA_API_KEY
-  private baseUrl = process.env.CLIQUEFARMA_BASE_URL || 'https://api.cliquefarma.com.br'
+
+export class GenericPharmacyAPI implements ExternalPriceAPI {
+  name = 'GenericPharmacy'
+  private apiKey = process.env.GENERIC_PHARMACY_API_KEY
+  private baseUrl = process.env.GENERIC_PHARMACY_BASE_URL || 'https://api.example-pharmacy.com.br'
   private timeout = parseInt(process.env.API_TIMEOUT || '10000')
   private maxResults = parseInt(process.env.MAX_RESULTS_PER_API || '8')
   private useMockData = process.env.USE_MOCK_DATA === 'true'
@@ -83,172 +84,12 @@ export class CliquefarmaAPI implements ExternalPriceAPI {
     const cacheKey = this.generateCacheKey(medicamento, estado)
     const cachedData = apiCache.get(cacheKey)
     if (cachedData) {
-      console.log('Dados do CliqueFarma obtidos do cache')
+      console.log('Dados da API genérica obtidos do cache')
       return cachedData
     }
 
     if (!this.apiKey || this.useMockData || this.forceMockData) {
-      console.warn('CliqueFarma API key não configurada ou modo mock ativo, usando dados mock')
-      return this.getMockData(medicamento, estado)
-    }
-
-    try {
-      const response = await this.retryRequest(() => axios.get(`${this.baseUrl}/v1/search`, {
-        params: {
-          q: medicamento,
-          location: estado,
-          limit: this.maxResults
-        },
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: this.timeout,
-      }))
-
-      const results = response.data?.results?.map((item: any) => ({
-        farmacia: item.pharmacy_name || 'N/A',
-        preco: parseFloat(item.price) || 0,
-        disponivel: item.available !== false,
-        estado: item.state || estado,
-        fonte: 'CliqueFarma',
-        link_fonte: item.url || item.product_url,
-        apresentacao: item.presentation || item.package_info,
-        quantidade: item.quantity || item.package_size,
-        volume: item.volume,
-        dosagem: item.dosage || item.strength
-      })) || []
-
-      // Salvar no cache
-      apiCache.set(cacheKey, results)
-      return results
-
-    } catch (error) {
-      console.error('Erro na API CliqueFarma:', this.formatError(error))
-      return this.getMockData(medicamento, estado)
-    }
-  }
-
-  private getMockData(medicamento: string, estado: string): ExternalPrice[] {
-    const basePrice = 15 + Math.random() * 10 // Preço base entre 15-25
-    
-    // Mock data based on medicine type
-    const isLiquid = medicamento.toLowerCase().includes('xarope') || 
-                     medicamento.toLowerCase().includes('suspensão') ||
-                     medicamento.toLowerCase().includes('solução');
-    
-    const packageOptions = isLiquid 
-      ? ['100ml', '120ml', '150ml', '200ml']
-      : ['10 comprimidos', '20 comprimidos', '30 comprimidos', '60 comprimidos'];
-    
-    return [
-      {
-        farmacia: 'Drogasil',
-        preco: parseFloat((basePrice * 1.1).toFixed(2)),
-        disponivel: true,
-        estado,
-        fonte: 'CliqueFarma',
-        link_fonte: 'https://www.drogasil.com.br',
-        apresentacao: `Caixa com ${packageOptions[0]}`,
-        quantidade: packageOptions[0],
-        volume: isLiquid ? packageOptions[0] : undefined
-      },
-      {
-        farmacia: 'Droga Raia',
-        preco: parseFloat((basePrice * 1.05).toFixed(2)),
-        disponivel: true,
-        estado,
-        fonte: 'CliqueFarma',
-        link_fonte: 'https://www.drogaraia.com.br',
-        apresentacao: `Caixa com ${packageOptions[1]}`,
-        quantidade: packageOptions[1],
-        volume: isLiquid ? packageOptions[1] : undefined
-      },
-      {
-        farmacia: 'Ultrafarma',
-        preco: parseFloat((basePrice * 0.95).toFixed(2)),
-        disponivel: true,
-        estado,
-        fonte: 'CliqueFarma',
-        link_fonte: 'https://www.ultrafarma.com.br',
-        apresentacao: `Caixa com ${packageOptions[2]}`,
-        quantidade: packageOptions[2],
-        volume: isLiquid ? packageOptions[2] : undefined
-      },
-      {
-        farmacia: 'Onofre',
-        preco: parseFloat((basePrice * 1.08).toFixed(2)),
-        disponivel: false,
-        estado,
-        fonte: 'CliqueFarma',
-        link_fonte: 'https://www.onofre.com.br',
-        apresentacao: `Caixa com ${packageOptions[3]}`,
-        quantidade: packageOptions[3],
-        volume: isLiquid ? packageOptions[3] : undefined
-      }
-    ]
-  }
-
-  private formatError(error: any): string {
-    if (error instanceof AxiosError) {
-      const status = error.response?.status
-      const message = error.response?.data?.message || error.message
-      return `HTTP ${status}: ${message}`
-    }
-    return error?.message || 'Erro desconhecido'
-  }
-
-  private async retryRequest<T>(fn: () => Promise<T>, maxRetries: number = 3): Promise<T> {
-    let lastError: any
-    
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        return await fn()
-      } catch (error) {
-        lastError = error
-        
-        if (attempt === maxRetries) break
-        
-        // Backoff exponencial: 1s, 2s, 4s
-        const delay = Math.pow(2, attempt - 1) * 1000
-        await new Promise(resolve => setTimeout(resolve, delay))
-        
-        console.warn(`CliqueFarma tentativa ${attempt} falhou, tentando novamente em ${delay}ms...`)
-      }
-    }
-    
-    throw lastError
-  }
-
-  private generateCacheKey(medicamento: string, estado: string): string {
-    return `cliquefarma:${medicamento.toLowerCase()}:${estado}`
-  }
-}
-
-export class ConsultaRemediosAPI implements ExternalPriceAPI {
-  name = 'ConsultaRemedios'
-  private apiKey = process.env.CONSULTAREMEDIOS_API_KEY
-  private baseUrl = process.env.CONSULTAREMEDIOS_BASE_URL || 'https://api.consultaremedios.com.br'
-  private timeout = parseInt(process.env.API_TIMEOUT || '10000')
-  private maxResults = parseInt(process.env.MAX_RESULTS_PER_API || '8')
-  private useMockData = process.env.USE_MOCK_DATA === 'true'
-  private forceMockData = false
-
-  setMockDataMode(useMockData: boolean) {
-    this.forceMockData = useMockData
-  }
-
-  async search(medicamento: string, estado: string = 'SP'): Promise<ExternalPrice[]> {
-    // Verificar cache primeiro
-    const cacheKey = this.generateCacheKey(medicamento, estado)
-    const cachedData = apiCache.get(cacheKey)
-    if (cachedData) {
-      console.log('Dados do ConsultaRemedios obtidos do cache')
-      return cachedData
-    }
-
-    if (!this.apiKey || this.useMockData || this.forceMockData) {
-      console.warn('ConsultaRemedios API key não configurada ou modo mock ativo, usando dados mock')
+      console.warn('API genérica não configurada ou modo mock ativo, usando dados mock')
       return this.getMockData(medicamento, estado)
     }
 
@@ -271,7 +112,7 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
         preco: parseFloat(product.price) || 0,
         disponivel: product.available !== false,
         estado: product.pharmacy?.state || estado,
-        fonte: 'ConsultaRemedios',
+        fonte: 'Farmácia Online',
         link_fonte: product.url || product.link,
         apresentacao: product.presentation || product.package_description,
         quantidade: product.package_size || product.quantity,
@@ -284,7 +125,7 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
       return results
 
     } catch (error) {
-      console.error('Erro na API ConsultaRemedios:', this.formatError(error))
+      console.error('Erro na API genérica:', this.formatError(error))
       return this.getMockData(medicamento, estado)
     }
   }
@@ -303,45 +144,45 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
     
     return [
       {
-        farmacia: 'Pague Menos',
+        farmacia: 'Farmácia Central',
         preco: parseFloat((basePrice * 1.08).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'ConsultaRemedios',
-        link_fonte: 'https://www.paguemenos.com.br',
+        fonte: 'Farmácia Online',
+        link_fonte: 'https://www.farmacia-central.example.com',
         apresentacao: `Caixa com ${packageOptions[0]}`,
         quantidade: packageOptions[0],
         volume: isLiquid ? packageOptions[0] : undefined
       },
       {
-        farmacia: 'Farmácia São João',
+        farmacia: 'Farmácia Norte',
         preco: parseFloat((basePrice * 1.15).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'ConsultaRemedios',
-        link_fonte: 'https://www.farmaciasaojoao.com.br',
+        fonte: 'Farmácia Online',
+        link_fonte: 'https://www.farmacia-norte.example.com',
         apresentacao: `Caixa com ${packageOptions[1]}`,
         quantidade: packageOptions[1],
         volume: isLiquid ? packageOptions[1] : undefined
       },
       {
-        farmacia: 'Drogaria Pacheco',
+        farmacia: 'Drogaria Sul',
         preco: parseFloat((basePrice * 0.92).toFixed(2)),
         disponivel: true,
         estado,
-        fonte: 'ConsultaRemedios',
-        link_fonte: 'https://www.drogariapacheco.com.br',
+        fonte: 'Farmácia Online',
+        link_fonte: 'https://www.drogaria-sul.example.com',
         apresentacao: `Caixa com ${packageOptions[2]}`,
         quantidade: packageOptions[2],
         volume: isLiquid ? packageOptions[2] : undefined
       },
       {
-        farmacia: 'Farmácia Popular',
+        farmacia: 'Farmácia Comunitária',
         preco: parseFloat((basePrice * 1.02).toFixed(2)),
         disponivel: false,
         estado,
-        fonte: 'ConsultaRemedios',
-        link_fonte: 'https://www.farmaciapopular.com.br',
+        fonte: 'Farmácia Online',
+        link_fonte: 'https://www.farmacia-comunitaria.example.com',
         apresentacao: `Caixa com ${packageOptions[3]}`,
         quantidade: packageOptions[3],
         volume: isLiquid ? packageOptions[3] : undefined
@@ -373,7 +214,7 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
         const delay = Math.pow(2, attempt - 1) * 1000
         await new Promise(resolve => setTimeout(resolve, delay))
         
-        console.warn(`ConsultaRemedios tentativa ${attempt} falhou, tentando novamente em ${delay}ms...`)
+        console.warn(`API genérica tentativa ${attempt} falhou, tentando novamente em ${delay}ms...`)
       }
     }
     
@@ -381,7 +222,7 @@ export class ConsultaRemediosAPI implements ExternalPriceAPI {
   }
 
   private generateCacheKey(medicamento: string, estado: string): string {
-    return `consultaremedios:${medicamento.toLowerCase()}:${estado}`
+    return `generic_pharmacy:${medicamento.toLowerCase()}:${estado}`
   }
 }
 
@@ -422,16 +263,15 @@ export class ExaSearchAPI implements ExternalPriceAPI {
           numResults: this.maxResults,
           useAutoprompt: true,
           includeDomains: [
-            'drogasil.com.br',
-            'drogaraia.com.br', 
-            'ultrafarma.com.br',
-            'drogasmil.com.br',
-            'paguemenos.com.br',
-            'drogariavenancio.com.br',
-            'drogariasaopaulo.com.br',
-            'farmaciaindiana.com.br',
-            'cliquefarma.com.br',
-            'consultaremedios.com.br'
+            'farmacia-a.example.com',
+            'farmacia-b.example.com', 
+            'farmacia-c.example.com',
+            'drogaria-central.example.com',
+            'farmacia-norte.example.com',
+            'drogaria-sul.example.com',
+            'farmacia-leste.example.com',
+            'farmacia-oeste.example.com',
+            'farmacia-online.example.com'
           ],
           text: {
             maxCharacters: 2000,
@@ -458,7 +298,7 @@ export class ExaSearchAPI implements ExternalPriceAPI {
   }
 
   private buildSearchQuery(medicamento: string, estado: string): string {
-    // Construir query otimizada para encontrar preços de medicamentos
+    // Construir query otimizada para encontrar preços de medicamentos específicos
     const estadoNomes: Record<string, string> = {
       'SP': 'São Paulo',
       'RJ': 'Rio de Janeiro', 
@@ -474,7 +314,8 @@ export class ExaSearchAPI implements ExternalPriceAPI {
 
     const estadoNome = estadoNomes[estado] || estado
 
-    return `preço ${medicamento} farmácia online ${estadoNome} Brasil comprar valor`
+    // Query mais específica para encontrar o medicamento exato
+    return `"${medicamento}" preço comprar farmácia online ${estadoNome} Brasil produto medicamento`
   }
 
   private parseExaResults(results: any[], medicamento: string, estado: string): ExternalPrice[] {
@@ -495,7 +336,8 @@ export class ExaSearchAPI implements ExternalPriceAPI {
           precoPorUnidade = parseFloat((preco / quantidade).toFixed(2));
         }
         
-        if (farmaciaInfo.nome && preco > 0) {
+        // Validar se o produto encontrado é realmente o que foi pesquisado
+        if (farmaciaInfo.nome && preco > 0 && this.isRelevantProduct(result, medicamento)) {
           precos.push({
             farmacia: farmaciaInfo.nome,
             preco: preco,
@@ -529,16 +371,15 @@ export class ExaSearchAPI implements ExternalPriceAPI {
     
     // Mapear domínios conhecidos para nomes de farmácias
     const farmaciaMap: Record<string, string> = {
-      'drogasil': 'Drogasil',
-      'drogaraia': 'Droga Raia',
-      'ultrafarma': 'Ultrafarma',
-      'drogasmil': 'Drogas Mil',
-      'paguemenos': 'Pague Menos',
-      'drogariavenancio': 'Drogaria Venâncio',
-      'drogariasaopaulo': 'Drogaria São Paulo',
-      'farmaciaindiana': 'Farmácia Indiana',
-      'cliquefarma': 'CliqueFarma',
-      'consultaremedios': 'ConsultaRemedios'
+      'farmacia-a': 'Farmácia A',
+      'farmacia-b': 'Farmácia B',
+      'farmacia-c': 'Farmácia C',
+      'drogaria-central': 'Drogaria Central',
+      'farmacia-norte': 'Farmácia Norte',
+      'drogaria-sul': 'Drogaria Sul',
+      'farmacia-leste': 'Farmácia Leste',
+      'farmacia-oeste': 'Farmácia Oeste',
+      'farmacia-online': 'Farmácia Online'
     }
 
     // Tentar identificar farmácia pelo domínio
@@ -615,8 +456,8 @@ export class ExaSearchAPI implements ExternalPriceAPI {
     const precos: ExternalPrice[] = []
     
     const farmaciasComuns = [
-      'Drogasil', 'Droga Raia', 'Ultrafarma', 'Pague Menos', 
-      'Drogaria São Paulo', 'Farmácia Popular'
+      'Farmácia A', 'Farmácia B', 'Farmácia C', 'Drogaria Central', 
+      'Farmácia Norte', 'Farmácia Comunitária'
     ]
     
     const numPrecos = Math.min(results.length, 4)
@@ -653,45 +494,45 @@ export class ExaSearchAPI implements ExternalPriceAPI {
     
     return [
       {
-        farmacia: 'Drogasil',
+        farmacia: 'Farmácia A',
         preco: parseFloat((basePrice * 1.1).toFixed(2)),
         disponivel: true,
         estado,
         fonte: 'EXA Search',
-        link_fonte: 'https://www.drogasil.com.br',
+        link_fonte: 'https://www.farmacia-a.example.com',
         apresentacao: `Caixa com ${packageOptions[0]}`,
         quantidade: packageOptions[0],
         volume: isLiquid ? packageOptions[0] : undefined
       },
       {
-        farmacia: 'Droga Raia',
+        farmacia: 'Farmácia B',
         preco: parseFloat((basePrice * 1.05).toFixed(2)),
         disponivel: true,
         estado,
         fonte: 'EXA Search',
-        link_fonte: 'https://www.drogaraia.com.br',
+        link_fonte: 'https://www.farmacia-b.example.com',
         apresentacao: `Caixa com ${packageOptions[1]}`,
         quantidade: packageOptions[1],
         volume: isLiquid ? packageOptions[1] : undefined
       },
       {
-        farmacia: 'Ultrafarma',
+        farmacia: 'Farmácia C',
         preco: parseFloat((basePrice * 0.95).toFixed(2)),
         disponivel: true,
         estado,
         fonte: 'EXA Search',
-        link_fonte: 'https://www.ultrafarma.com.br',
+        link_fonte: 'https://www.farmacia-c.example.com',
         apresentacao: `Caixa com ${packageOptions[2]}`,
         quantidade: packageOptions[2],
         volume: isLiquid ? packageOptions[2] : undefined
       },
       {
-        farmacia: 'Pague Menos',
+        farmacia: 'Farmácia Central',
         preco: parseFloat((basePrice * 1.08).toFixed(2)),
         disponivel: true,
         estado,
         fonte: 'EXA Search',
-        link_fonte: 'https://www.paguemenos.com.br',
+        link_fonte: 'https://www.farmacia-central.example.com',
         apresentacao: `Caixa com ${packageOptions[3]}`,
         quantidade: packageOptions[3],
         volume: isLiquid ? packageOptions[3] : undefined
@@ -704,6 +545,24 @@ export class ExaSearchAPI implements ExternalPriceAPI {
       return error.message
     }
     return error?.message || 'Erro desconhecido'
+  }
+
+  private isRelevantProduct(result: any, medicamento: string): boolean {
+    const searchTerm = medicamento.toLowerCase()
+    const title = (result.title || '').toLowerCase()
+    const text = (result.text || result.summary || '').toLowerCase()
+    const url = result.url.toLowerCase()
+    
+    // Verificar se o nome do medicamento está presente no título, texto ou URL
+    const isRelevant = title.includes(searchTerm) || 
+                      text.includes(searchTerm) || 
+                      url.includes(searchTerm)
+    
+    if (!isRelevant) {
+      console.warn(`Produto não relevante encontrado: ${title} para busca: ${medicamento}`)
+    }
+    
+    return isRelevant
   }
 
   private generateCacheKey(medicamento: string, estado: string): string {
@@ -733,20 +592,20 @@ export class WebScrapingAPI implements ExternalPriceAPI {
   private getFarmaciasEstado(estado: string) {
     const farmacias: Record<string, Array<{nome: string, fator: number}>> = {
       'SP': [
-        { nome: 'Drogaria São Paulo', fator: 1.02 },
-        { nome: 'Farmácia Popular', fator: 1.12 },
-        { nome: 'Droga Mais', fator: 0.98 },
-        { nome: 'Farmácia Preço Bom', fator: 0.89 }
+        { nome: 'Farmácia Norte', fator: 1.02 },
+        { nome: 'Farmácia Comunitária', fator: 1.12 },
+        { nome: 'Drogaria Popular', fator: 0.98 },
+        { nome: 'Farmácia Econômica', fator: 0.89 }
       ],
       'RJ': [
-        { nome: 'Drogaria Venâncio', fator: 1.05 },
-        { nome: 'Farmácia Globo', fator: 1.08 },
+        { nome: 'Drogaria Leste', fator: 1.05 },
+        { nome: 'Farmácia Sul', fator: 1.08 },
         { nome: 'Drogaria Moderna', fator: 0.96 }
       ],
       'MG': [
-        { nome: 'Drogaria Araujo', fator: 1.03 },
-        { nome: 'Farmácia Indiana', fator: 0.94 },
-        { nome: 'Drogaria Nissei', fator: 1.01 }
+        { nome: 'Drogaria Central', fator: 1.03 },
+        { nome: 'Farmácia Oeste', fator: 0.94 },
+        { nome: 'Drogaria Norte', fator: 1.01 }
       ]
     }
 

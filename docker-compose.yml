@@ -4,7 +4,7 @@ services:
   # n8n - Automação de Workflows
   n8n:
     image: n8nio/n8n:latest
-    container_name: farmabot-n8n
+    container_name: farmacia-n8n
     restart: unless-stopped
     ports:
       - "5678:5678"
@@ -14,11 +14,11 @@ services:
       - N8N_PROTOCOL=http
       - WEBHOOK_URL=http://localhost:5678/webhook
       - GENERIC_TIMEZONE=America/Sao_Paulo
-      - N8N_ENCRYPTION_KEY=farmabot-encryption-key-32-chars
+      - N8N_ENCRYPTION_KEY=farmacia-encryption-key-32-chars
       - N8N_USER_MANAGEMENT_DISABLED=true
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=farmabot123
+      - N8N_BASIC_AUTH_PASSWORD=farmacia123
       - N8N_METRICS=true
       - N8N_LOG_LEVEL=info
       # Supabase connection
@@ -28,12 +28,12 @@ services:
       - n8n_data:/home/node/.n8n
       - ./n8n/workflows:/home/node/.n8n/workflows
     networks:
-      - farmabot-network
+      - farmacia-network
 
   # Redis - Cache e Filas
   redis:
     image: redis:7-alpine
-    container_name: farmabot-redis
+    container_name: farmacia-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -41,23 +41,24 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - farmabot-network
+      - farmacia-network
 
   # PostgreSQL Local (Backup/Dev)
   postgres:
     image: postgres:15
-    container_name: farmabot-postgres
+    container_name: farmacia-postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=farmabot_dev
+      - POSTGRES_DB=farmacia_dev
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=farmabot123
+      - POSTGRES_PASSWORD=farmacia123
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - farmabot-network
+      - farmacia-network
+
 
 volumes:
   n8n_data:
@@ -65,5 +66,5 @@ volumes:
   postgres_data:
 
 networks:
-  farmabot-network:
+  farmacia-network:
     driver: bridge

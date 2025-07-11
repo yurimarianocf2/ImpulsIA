@@ -21,8 +21,7 @@ const serverEnvSchema = z.object({
   
   // External APIs
   EXA_API_KEY: z.string().optional(), // Made optional for development
-  CLIQUEFARMA_API_KEY: z.string().optional(),
-  CONSULTA_REMEDIOS_API_KEY: z.string().optional(),
+  GENERIC_PHARMACY_API_KEY: z.string().optional(),
   
   // WhatsApp Business API
   WHATSAPP_PHONE_ID: z.string().optional(),

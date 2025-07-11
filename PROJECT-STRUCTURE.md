@@ -1,4 +1,4 @@
-# 🏗️ Estrutura do Projeto - FarmaBot Pro
+# 🏗️ Estrutura do Projeto - FarmacIA
 
 ## 📊 Resumo da Limpeza Realizada
 

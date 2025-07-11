@@ -1,21 +1,19 @@
-# CLAUDE.md - FarmaBot Pro Evolution
+# CLAUDE.md - PriceBot Evolution
 
 Este arquivo fornece orientação completa para Claude Code ao trabalhar neste repositório.
 
 ## 🎯 Visão de Negócio
 
 ### O Problema
-- **70% das pequenas farmácias** ainda usam controle manual de estoque
-- **92% dos idosos** (principal cliente) usam WhatsApp diariamente  
-- **Perda de 15-30% em vendas** por falta de atendimento 24/7
-- **Competição desleal** com grandes redes em preços
+- Controle manual de estoque ineficiente
+- Falta de comparação de preços em tempo real
+- Dificuldade em análise de dados de vendas
 
 ### Nossa Solução
-Sistema integrado de atendente virtual que transforma pequenas farmácias em negócios digitais competitivos, oferecendo:
-- 🤖 Atendimento 24/7 via WhatsApp
+Sistema de comparação de preços e gestão de estoque, oferecendo:
 - 💰 Comparação de preços em tempo real
 - 📊 Analytics e insights de vendas
-- 🔄 Integração com ERPs existentes
+- 🔄 Gestão de estoque básica
 
 ## 🏗️ Arquitetura do Sistema
 
@@ -65,7 +63,7 @@ graph TB
 ## 📁 Estrutura do Projeto
 
 ```
-farmabot-pro/
+farmacia/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/               # API routes
@@ -100,32 +98,19 @@ farmabot-pro/
 └── scripts/                  # Utility scripts
 ```
 
-## 🤖 Sistema de Agentes Especializados
+## 🤖 Sistema de Desenvolvimento
 
-### Hierarquia de Agentes
-1. **Master Agent** - Coordena todos os outros agentes
-2. **Domain Agents** - Especialistas em áreas específicas
-   - `agent-backend.md` - Desenvolvimento backend (API routes, integrações)
-   - `agent-frontend.md` - Desenvolvimento frontend (Next.js, React)
-   - `agent-n8n.md` - Automações e workflows
-   - `agent-ux-ui.md` - Design e experiência do usuário
-   - `agent-devops.md` - Docker, deploy e infraestrutura
-   - `agent-security.md` - Segurança e compliance LGPD
+### Desenvolvimento Backend
+- API routes para consulta de preços
+- Integrações com APIs externas
 
-### Como Usar os Agentes
-```bash
-# Para tarefas de backend
-@agent-backend criar endpoint para consulta de preços
+### Desenvolvimento Frontend
+- Dashboard de vendas em Next.js
+- Interface React responsiva
 
-# Para tarefas de frontend
-@agent-frontend implementar dashboard de vendas
-
-# Para automações
-@agent-n8n criar workflow de alerta de estoque
-
-# Para melhorias de UX
-@agent-ux-ui otimizar fluxo de checkout
-```
+### Gestão de Estoque
+- Alertas de estoque baixo
+- Controle de inventário
 
 ## 🛠️ Stack Tecnológica Completa
 
@@ -151,10 +136,8 @@ farmabot-pro/
 - **Deployment**: Vercel (frontend) + Docker (services)
 
 ### Integrações
-- **WhatsApp**: Official Business API (planned)
-- **n8n**: Self-hosted automation (Docker)
-- **ERPs**: Vetor connector (TypeScript)
 - **APIs**: Exa API (price analysis), Supabase
+- **External Services**: Price comparison APIs
 
 ## 📋 Padrões de Código
 
@@ -205,21 +188,13 @@ refactor: optimize database queries
 test: add unit tests for product service
 ```
 
-## 🔐 Segurança e Compliance
-
-### Requisitos Legais
-- **LGPD**: Proteção de dados pessoais
-- **ANVISA**: Regulamentação de medicamentos
-- **SNGPC**: Sistema Nacional de Gerenciamento de Produtos Controlados
-- **CRF**: Conselho Regional de Farmácia
+## 🔐 Segurança
 
 ### Práticas de Segurança
-- Criptografia AES-256 para dados sensíveis
-- TLS 1.3 para todas as comunicações
-- Rate limiting e DDoS protection
-- Audit logs para todas as operações
-- Princípio do menor privilégio
-- Autenticação multifator para admins
+- Criptografia para dados
+- TLS para comunicações
+- Rate limiting básico
+- Autenticação segura
 
 ## 🎯 Funcionalidades Implementadas
 
@@ -235,15 +210,9 @@ test: add unit tests for product service
 - Recomendações de preços
 - Monitoramento de margem de lucro
 
-### Conectores ERP
-- Conector Vetor Farma (TypeScript)
-- Sincronização de produtos e estoque
-- Base para outros ERPs
-
-### Automação n8n
-- Workflows de automação
-- Integração com WhatsApp (planejado)
-- Processamento de dados
+### Integração de Dados
+- APIs de sincronização de produtos
+- Processamento de dados de estoque
 
 ## 🚀 Quick Start
 
@@ -257,17 +226,11 @@ npm install
 # Configure as variáveis de ambiente
 cp .env.example .env.local
 
-# Inicie os serviços Docker
-docker-compose up -d
-
 # Inicie o desenvolvimento
 npm run dev
 
 # Acesse o dashboard
 open http://localhost:3000
-
-# Acesse o n8n
-open http://localhost:5678
 ```
 
 ## 📝 Guias de Contribuição
@@ -332,7 +295,7 @@ open http://localhost:5678
 - Blog técnico: [link]
 
 ### Suporte
-- Email: suporte@farmabot.pro
+- Email: support@example.com
 - WhatsApp: +55 11 99999-9999
 - Horário: Seg-Sex 9h-18h
 
@@ -340,4 +303,4 @@ open http://localhost:5678
 
 **Última atualização**: ${new Date().toISOString()}
 **Versão**: 2.0.0
-**Maintainer**: Equipe FarmaBot Pro
+**Maintainer**: Equipe FarmacIA

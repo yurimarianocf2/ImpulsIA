@@ -15,8 +15,8 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...
 NEXT_PUBLIC_FARMACIA_ID=550e8400-e29b-41d4-a716-446655440000
 
 # APIs Externas
-CLIQUEFARMA_API_KEY=your_cliquefarma_api_key_here
-CONSULTAREMEDIOS_API_KEY=your_consultaremedios_api_key_here
+EXTERNAL_PHARMACY_API_KEY=your_pharmacy_api_key_here
+GENERIC_PHARMACY_API_KEY=your_generic_pharmacy_api_key_here
 
 # Configurações
 USE_MOCK_DATA=false
@@ -89,8 +89,8 @@ database/add-sample-products.sql
 
 ### 3. Configurar APIs Externas (Opcional)
 Para usar APIs reais, substitua as chaves no `.env.local`:
-- `CLIQUEFARMA_API_KEY`
-- `CONSULTAREMEDIOS_API_KEY`
+- `EXTERNAL_PHARMACY_API_KEY`
+- `GENERIC_PHARMACY_API_KEY`
 
 ### 4. Testar o Sistema
 1. Inicie a aplicação: `npm run dev`

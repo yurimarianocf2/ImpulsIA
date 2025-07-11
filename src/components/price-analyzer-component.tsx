@@ -24,6 +24,7 @@ interface PriceAnalysisResult {
     estado: string
     fonte: string
     link_fonte?: string
+    url?: string
     quantidade?: string
     volume?: string
     apresentacao?: string
@@ -41,7 +42,7 @@ export function PriceAnalyzer() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PriceAnalysisResult | null>(null)
   const [error, setError] = useState('')
-  const [useMockData, setUseMockData] = useState(process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true')
+  // Mock data configuração removida - usando sempre dados reais
 
   const handleAnalyze = async () => {
     if (!medicamento.trim()) {
@@ -62,8 +63,7 @@ export function PriceAnalyzer() {
         body: JSON.stringify({
           farmacia_id: farmaciaId,
           medicamento: medicamento.trim(),
-          estado,
-          useMockData
+          estado
         })
       })
 
@@ -280,7 +280,7 @@ export function PriceAnalyzer() {
                         {/* Link para fonte */}
                         <div className="flex items-center gap-2">
                             <a 
-                              href={preco.link_fonte || fallbackUrl} 
+                              href={preco.url || preco.link_fonte || fallbackUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors"

@@ -270,9 +270,9 @@ Acompanhe no Supabase Dashboard:
 
 ## Suporte
 
-- Documentação: [docs.farmabot.pro](https://docs.farmabot.pro)
-- GitHub: [github.com/farmabot-pro](https://github.com/farmabot-pro)
-- Email: suporte@farmabot.pro
+- Documentação: [docs.example.com](https://docs.example.com)
+- GitHub: [github.com/example](https://github.com/example)
+- Email: support@example.com
 
 ---
 

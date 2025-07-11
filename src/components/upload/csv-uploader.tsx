@@ -182,16 +182,16 @@ export function CsvUploader({ farmaciaId, onUploadComplete }: CsvUploaderProps) 
   }
 
   const downloadTemplate = () => {
-    const template = `codigo_barras,nome,nome_comercial,nome_generico,principio_ativo,concentracao,forma_farmaceutica,apresentacao,categoria,subcategoria,classe_terapeutica,fabricante,laboratorio,preco_custo,preco_venda,preco_tabela,desconto_maximo,estoque_atual,estoque_minimo,estoque_maximo,unidade,lote,validade,data_entrada,requer_receita,tipo_receita,controlado,psicoativo,antimicrobiano,indicacao,contraindicacao,posologia,observacoes
-7896658451234,Dipirona 500mg,Novalgina,Dipirona Sódica,Dipirona Monoidratada,500mg,comprimido,500mg 20 comprimidos,Analgesicos,Analgesicos não opioides,Sistema Nervoso,Medley,Sanofi,3.50,8.90,9.50,15,45,10,100,UN,L240101,2025-12-31,2024-01-15,false,,false,false,false,Dor e febre,Alergia ao princípio ativo,1 comprimido a cada 6 horas,Não usar por mais de 5 dias
-7896658451235,Rivotril 2mg,Rivotril,Clonazepam,Clonazepam,2mg,comprimido,2mg 30 comprimidos,Controlados,Benzodiazepínicos,Sistema Nervoso,Roche,Roche,12.00,35.00,38.00,5,15,5,50,UN,L240102,2026-06-30,2024-01-20,true,azul,true,true,false,Ansiedade e convulsões,Miastenia gravis,0.5 a 1mg antes de dormir,Receituário azul obrigatório
-7896658451236,Vitamina D3 2000UI,Addera D3,Colecalciferol,Colecalciferol,2000UI,gota,15ml frasco conta-gotas,Vitaminas,Vitaminas D,Vitaminas,EMS,EMS,18.50,42.00,45.00,20,25,8,80,UN,L240103,2025-08-15,2024-02-01,false,,false,false,false,Deficiência de vitamina D,Hipercalcemia,2 gotas ao dia,Tomar com alimentos gordurosos`
+    const template = `codigo_barras,nome,descricao,marca,categoria,subcategoria,tipo,fabricante,preco_custo,preco_venda,estoque_atual,estoque_minimo,unidade,lote,validade,observacoes
+1234567890123,Produto A,Produto exemplo categoria A,Marca X,Eletrônicos,Smartphones,Celular,Fabricante A,150.00,299.00,50,10,UN,L001,2025-12-31,Produto exemplo
+1234567890124,Produto B,Produto exemplo categoria B,Marca Y,Casa,Cozinha,Utensílio,Fabricante B,25.00,59.00,30,5,UN,L002,2026-06-30,Produto exemplo
+1234567890125,Produto C,Produto exemplo categoria C,Marca Z,Vestuário,Camisetas,Roupa,Fabricante C,20.00,45.00,100,15,UN,L003,2025-08-15,Produto exemplo`
 
     const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
     link.setAttribute('href', url)
-    link.setAttribute('download', 'template-medicamentos-farmacia.csv')
+    link.setAttribute('download', 'template-produtos.csv')
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()

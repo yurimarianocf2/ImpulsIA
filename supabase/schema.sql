@@ -13,7 +13,7 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb"; -- Para time-series data
 CREATE TABLE farmacias (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nome VARCHAR(255) NOT NULL,
-    cnpj VARCHAR(18) UNIQUE NOT NULL,
+    business_id VARCHAR(50) UNIQUE NOT NULL,
     telefone VARCHAR(20),
     whatsapp_number VARCHAR(20) UNIQUE,
     endereco JSONB,
@@ -92,7 +92,7 @@ CREATE TABLE pedidos (
     numero_pedido VARCHAR(20) UNIQUE,
     cliente_nome VARCHAR(255),
     cliente_telefone VARCHAR(20),
-    cliente_cpf VARCHAR(14),
+    cliente_id VARCHAR(50),
     status VARCHAR(50) DEFAULT 'pendente',
     valor_total DECIMAL(10,2),
     forma_pagamento VARCHAR(50),
@@ -234,8 +234,8 @@ CREATE POLICY "Farmácias podem gerenciar suas conversas" ON conversas
 
 -- Inserir dados de exemplo
 INSERT INTO farmacias (nome, cnpj, telefone, whatsapp_number, endereco) VALUES
-('Farmácia Saúde & Vida', '12.345.678/0001-90', '11999999999', '5511999999999', 
- '{"rua": "Rua das Flores", "numero": "123", "bairro": "Centro", "cidade": "São Paulo", "uf": "SP", "cep": "01234-567"}'::jsonb);
+('Loja Exemplo', 'STORE001', '11999999999', '5511999999999', 
+ '{"rua": "Rua Exemplo", "numero": "123", "bairro": "Centro", "cidade": "Cidade Exemplo", "uf": "EX", "cep": "12345-678"}'::jsonb);
 
 -- Tabela de Análises de Preço
 CREATE TABLE analises_preco (

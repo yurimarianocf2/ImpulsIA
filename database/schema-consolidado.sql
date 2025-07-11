@@ -1,6 +1,6 @@
--- ESQUEMA CONSOLIDADO SUPABASE - FARMABOT PRO
+-- ESQUEMA CONSOLIDADO SUPABASE - LOJA
 -- Elimina duplicações e organiza informações em estrutura otimizada
--- Cada farmácia terá seu próprio cadastro consolidado de medicamentos
+-- Cada loja terá seu próprio cadastro consolidado de produtos
 
 -- Habilitar extensões necessárias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -9,12 +9,12 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "unaccent";
 
 -- =====================================================
--- TABELA PRINCIPAL: FARMACIAS
+-- TABELA PRINCIPAL: LOJAS
 -- =====================================================
-CREATE TABLE IF NOT EXISTS farmacias (
+CREATE TABLE IF NOT EXISTS lojas (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nome VARCHAR(255) NOT NULL,
-    cnpj VARCHAR(18) UNIQUE NOT NULL,
+    business_id VARCHAR(50) UNIQUE NOT NULL,
     telefone VARCHAR(20),
     whatsapp VARCHAR(20) UNIQUE,
     endereco JSONB,
@@ -26,12 +26,12 @@ CREATE TABLE IF NOT EXISTS farmacias (
 );
 
 -- =====================================================
--- TABELA CONSOLIDADA: MEDICAMENTOS
--- Todas as informações em uma única tabela por farmácia
+-- TABELA CONSOLIDADA: PRODUTOS
+-- Todas as informações em uma única tabela por loja
 -- =====================================================
-CREATE TABLE IF NOT EXISTS medicamentos (
+CREATE TABLE IF NOT EXISTS produtos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    farmacia_id UUID NOT NULL REFERENCES farmacias(id) ON DELETE CASCADE,
+    loja_id UUID NOT NULL REFERENCES lojas(id) ON DELETE CASCADE,
     
     -- Identificação do produto
     codigo_barras VARCHAR(50),
@@ -39,18 +39,16 @@ CREATE TABLE IF NOT EXISTS medicamentos (
     nome_comercial VARCHAR(255),
     nome_generico VARCHAR(255),
     
-    -- Informações farmacêuticas
-    principio_ativo VARCHAR(255),
-    concentracao VARCHAR(100),
-    forma_farmaceutica VARCHAR(100), -- comprimido, cápsula, xarope, etc
-    apresentacao VARCHAR(255),
+    -- Informações do produto
+    descricao TEXT,
+    marca VARCHAR(255),
+    modelo VARCHAR(255),
     fabricante VARCHAR(255),
-    laboratorio VARCHAR(255),
     
     -- Categorização
     categoria VARCHAR(100),
     subcategoria VARCHAR(100),
-    classe_terapeutica VARCHAR(255),
+    tipo VARCHAR(255),
     
     -- Informações comerciais
     preco_venda DECIMAL(10,2),
@@ -79,17 +77,11 @@ CREATE TABLE IF NOT EXISTS medicamentos (
         END
     ) STORED,
     
-    -- Regulamentação
-    requer_receita BOOLEAN DEFAULT false,
-    tipo_receita VARCHAR(50), -- branca, azul, amarela, especial
-    controlado BOOLEAN DEFAULT false,
-    psicoativo BOOLEAN DEFAULT false,
-    antimicrobiano BOOLEAN DEFAULT false,
+    -- Atributos especiais
+    especial BOOLEAN DEFAULT false,
+    categoria_especial VARCHAR(50),
     
-    -- Informações complementares
-    indicacao TEXT,
-    contraindicacao TEXT,
-    posologia TEXT,
+    -- Informações básicas
     observacoes TEXT,
     
     -- Metadados
@@ -208,7 +200,7 @@ CREATE TABLE IF NOT EXISTS pedidos_consolidada (
     -- Cliente
     cliente_nome VARCHAR(255),
     cliente_telefone VARCHAR(20),
-    cliente_cpf VARCHAR(14),
+    cliente_id VARCHAR(50),
     
     -- Valores
     subtotal DECIMAL(10,2) DEFAULT 0,

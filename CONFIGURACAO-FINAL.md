@@ -8,12 +8,12 @@ Seu arquivo `.env.local` está perfeito e todas as variáveis são carregadas co
 
 ```env
 # ✅ Supabase - Configurado
-NEXT_PUBLIC_SUPABASE_URL=https://fcdfunvzoxhobfskwsag.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci... ✅
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGci... ✅
 
-# ✅ Farmácia - Configurado  
-NEXT_PUBLIC_FARMACIA_ID=550e8400-e29b-41d4-a716-446655440000
+# ✅ Loja - Configurado  
+NEXT_PUBLIC_STORE_ID=550e8400-e29b-41d4-a716-446655440000
 
 # ✅ EXA API - Configurado
 EXA_API_KEY=f4a3c8c1-3183-4bce-8b92-ee34ba7e8c02
@@ -29,8 +29,8 @@ NODE_ENV=development
 ### ✅ **Integração EXA Search Implementada**
 
 - **ExaSearchAPI**: Nova classe implementada com busca semântica
-- **Domínios focados**: 10+ farmácias brasileiras principais
-- **Extração automática**: Preços, farmácias e disponibilidade
+- **Domínios focados**: Lojas de varejo online
+- **Extração automática**: Preços, lojas e disponibilidade
 - **Cache inteligente**: Performance otimizada
 - **Fallback robusto**: Dados mock quando necessário
 
@@ -42,7 +42,7 @@ A API key do EXA (`f4a3c8c1-3183-4bce-8b92-ee34ba7e8c02`) retorna erro "Invalid 
 3. Formato incorreto
 
 **Solução**: O sistema funciona perfeitamente com dados mock. Para usar EXA real:
-1. Acesse https://dashboard.exa.ai/api-keys
+1. Acesse https://dashboard.exa.ai/api-keys (example URL)
 2. Gere uma nova API key válida
 3. Substitua no `.env.local`
 

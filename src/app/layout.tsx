@@ -3,7 +3,7 @@ import "../globals.css";
 import { N8nChatWidget } from "@/components/N8nChatWidget";
 
 export const metadata: Metadata = {
-  title: "FarmaBot Pro - Dashboard",
+  title: "FarmacIA - Dashboard",
   description: "Gerencie sua farmácia de forma inteligente.",
 };
 
@@ -19,7 +19,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
-        <N8nChatWidget />
+        {/* <N8nChatWidget /> */}
       </body>
     </html>
   );

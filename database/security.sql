@@ -1,5 +1,5 @@
 -- ============================================================================
--- FARMABOT PRO - CONFIGURAÇÕES DE SEGURANÇA
+-- FARMACIA - CONFIGURAÇÕES DE SEGURANÇA
 -- Row Level Security (RLS) e Políticas de Acesso
 -- ============================================================================
 
@@ -16,8 +16,8 @@
 -- GRANT USAGE ON SCHEMA public TO farmacia_staff;
 
 -- Role para o sistema/bot
--- CREATE ROLE farmabot_system;
--- GRANT ALL ON SCHEMA public TO farmabot_system;
+-- CREATE ROLE farmacia_system;
+-- GRANT ALL ON SCHEMA public TO farmacia_system;
 
 -- ============================================================================
 -- POLÍTICAS DE ROW LEVEL SECURITY
@@ -187,25 +187,15 @@ CREATE TRIGGER audit_pedidos
 -- FUNÇÕES DE SEGURANÇA PARA VALIDAÇÃO
 -- ============================================================================
 
--- Função para validar CPF (simplificada)
-CREATE OR REPLACE FUNCTION validar_cpf(cpf TEXT)
+-- Função para validar ID genérico
+CREATE OR REPLACE FUNCTION validar_id_generico(id_text TEXT)
 RETURNS BOOLEAN AS $$
 BEGIN
-    -- Remove caracteres não numéricos
-    cpf := regexp_replace(cpf, '[^0-9]', '', 'g');
-    
-    -- Verifica se tem 11 dígitos
-    IF length(cpf) != 11 THEN
+    -- Verifica se não está vazio e tem tamanho razoável
+    IF length(trim(id_text)) < 1 OR length(trim(id_text)) > 50 THEN
         RETURN FALSE;
     END IF;
     
-    -- Verifica se não são todos os dígitos iguais
-    IF cpf ~ '^(\d)\1{10}$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Aqui poderia implementar a validação completa do CPF
-    -- Por simplicidade, retornamos true se passou nas verificações básicas
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
@@ -222,20 +212,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Função para validar CNPJ (simplificada)
-CREATE OR REPLACE FUNCTION validar_cnpj(cnpj TEXT)
+-- Função para validar business ID genérico
+CREATE OR REPLACE FUNCTION validar_business_id(business_id TEXT)
 RETURNS BOOLEAN AS $$
 BEGIN
-    -- Remove caracteres não numéricos
-    cnpj := regexp_replace(cnpj, '[^0-9]', '', 'g');
-    
-    -- Verifica se tem 14 dígitos
-    IF length(cnpj) != 14 THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Verifica se não são todos os dígitos iguais
-    IF cnpj ~ '^(\d)\1{13}$' THEN
+    -- Verifica se não está vazio e tem tamanho razoável
+    IF length(trim(business_id)) < 1 OR length(trim(business_id)) > 50 THEN
         RETURN FALSE;
     END IF;
     

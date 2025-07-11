@@ -196,7 +196,7 @@ export default function UploadProdutosPage() {
                   </Button>
                 </div>
                 <div className="text-xs text-gray-400 space-y-1 mt-2 border-t border-gray-700/50 pt-2">
-                  <p>📧 suporte@farmabot.pro</p>
+                  <p>📧 support@example.com</p>
                   <p>📱 (11) 99999-9999</p>
                   <p>🕐 Seg-Sex 9h-18h</p>
                 </div>

@@ -44,11 +44,11 @@ async function setupBasicTables() {
       .from('farmacias')
       .upsert({
         id: farmaciaId,
-        nome: 'Farmácia São João',
+        nome: 'Farmácia Exemplo',
         cnpj: '12.345.678/0001-90',
         telefone: '11999999999',
         whatsapp: '11999999999',
-        email: 'contato@farmaciasaojoao.com.br',
+        email: 'contato@farmacia-exemplo.com.br',
         endereco: {
           rua: 'Rua das Flores, 123',
           bairro: 'Centro',

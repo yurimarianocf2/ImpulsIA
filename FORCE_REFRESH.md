@@ -4,7 +4,7 @@
 
 **Agora TODAS as 3 APIs têm:**
 - ✅ **Quantidade/Volume**: "30 comprimidos", "100ml"
-- ✅ **Links clicáveis**: "Ver no CliqueFarma"
+- ✅ **Links clicáveis**: "Ver fonte"
 - ✅ **Apresentação completa**: "Caixa com 30 comprimidos"
 
 ## 🎯 Para Ver as Mudanças
@@ -34,15 +34,15 @@ npm run dev
 
 **Resultado esperado:**
 ```
-Drogasil
+Farmácia A
 📦 Caixa com 30 comprimidos  
-🔗 Ver no CliqueFarma         R$ 18,50
+🔗 Ver fonte                  R$ 18,50
 [✅ Disponível]
 ```
 
 ## 🔧 APIs Atualizadas
-- ✅ CliqueFarmaAPI → getMockData() atualizado
-- ✅ ConsultaRemediosAPI → getMockData() atualizado  
+- ✅ APIs externas → getMockData() atualizado
+- ✅ GenericPharmacyAPI → getMockData() atualizado  
 - ✅ ExaSearchAPI → getMockData() + generatePricesFromContent() atualizados
 
 **Todas as mudanças estão prontas!** 🚀

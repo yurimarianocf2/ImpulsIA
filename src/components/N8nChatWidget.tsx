@@ -23,17 +23,17 @@ export function N8nChatWidget() {
               loadPreviousSession: false,
               chatInputKey: 'chatInput',
               chatSessionKey: 'sessionId',
-              defaultLanguage: 'pt',
+              defaultLanguage: 'en',
               initialMessages: [
-                'Olá! Sou a FarmacIA, sua assistente virtual. Como posso te ajudar hoje?'
+                'Olá! Sou seu assistente de preços. Como posso te ajudar hoje?'
               ],
               i18n: {
                 pt: {
-                  title: 'FarmacIA 💊',
-                  subtitle: 'Assistente Virtual Farmacêutica',
+                  title: 'ShopBot 🛒',
+                  subtitle: 'Assistente Virtual de Preços',
                   footer: '',
                   getStarted: 'Nova Conversa',
-                  inputPlaceholder: 'Digite sua pergunta sobre medicamentos...',
+                  inputPlaceholder: 'Digite sua pergunta sobre preços...',
                   closeButtonTooltip: 'Fechar Chat',
                   sendButtonTooltip: 'Enviar Mensagem'
                 }

@@ -1,16 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PriceAnalyzer } from '@/lib/price-analyzer'
+import { withAuth, PERMISSIONS } from '@/lib/auth'
+import { withRateLimit, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter'
 
-export async function POST(request: NextRequest) {
+async function handlePriceAnalysis(request: NextRequest) {
   try {
-    const { farmacia_id, medicamento, estado } = await request.json()
+    const { medicamento, estado } = await request.json()
 
     // Validar parâmetros obrigatórios
-    if (!farmacia_id || !medicamento) {
+    if (!medicamento) {
       return NextResponse.json(
-        { error: 'farmacia_id e medicamento são obrigatórios' },
+        { error: 'medicamento é obrigatório' },
         { status: 400 }
       )
+    }
+
+    // Obter farmacia_id dos headers (definido pelo middleware de auth)
+    const farmacia_id = request.headers.get('x-farmacia-id');
+    
+    if (!farmacia_id) {
+      return NextResponse.json(
+        { error: 'farmacia_id não encontrado no contexto de autenticação' },
+        { status: 400 }
+      );
     }
 
     console.log(`🔍 Analisando preços para "${medicamento}" na farmácia ${farmacia_id}`)
@@ -44,18 +56,27 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+async function handlePriceAnalysisGET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const farmacia_id = searchParams.get('farmacia_id')
     const medicamento = searchParams.get('medicamento')
     const estado = searchParams.get('estado') || 'SP'
 
-    if (!farmacia_id || !medicamento) {
+    if (!medicamento) {
       return NextResponse.json(
-        { error: 'farmacia_id e medicamento são obrigatórios' },
+        { error: 'medicamento é obrigatório' },
         { status: 400 }
       )
+    }
+
+    // Obter farmacia_id dos headers (definido pelo middleware de auth)
+    const farmacia_id = request.headers.get('x-farmacia-id');
+    
+    if (!farmacia_id) {
+      return NextResponse.json(
+        { error: 'farmacia_id não encontrado no contexto de autenticação' },
+        { status: 400 }
+      );
     }
 
     console.log(`🔍 GET - Analisando preços para "${medicamento}" na farmácia ${farmacia_id}`)
@@ -82,3 +103,22 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+// Exportar as funções protegidas por autenticação e rate limiting
+export const POST = withRateLimit(
+  withAuth(handlePriceAnalysis, {
+    requireFarmaciaAccess: false, // Já validado pelo middleware
+    requiredPermissions: [PERMISSIONS.PRICES_READ, PERMISSIONS.PRICES_ANALYZE]
+  }),
+  RATE_LIMIT_CONFIGS.PRICE_ANALYSIS,
+  (request) => request.headers.get('x-farmacia-id') || undefined
+);
+
+export const GET = withRateLimit(
+  withAuth(handlePriceAnalysisGET, {
+    requireFarmaciaAccess: false, // Já validado pelo middleware
+    requiredPermissions: [PERMISSIONS.PRICES_READ, PERMISSIONS.PRICES_ANALYZE]
+  }),
+  RATE_LIMIT_CONFIGS.PRICE_ANALYSIS,
+  (request) => request.headers.get('x-farmacia-id') || undefined
+);
