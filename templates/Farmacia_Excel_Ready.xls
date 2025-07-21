@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Farmacia WhatsApp Generator</Author>
+  <Title>Template Farmacia WhatsApp</Title>
+  <Subject>Planilha para cadastro de produtos e promocoes</Subject>
+  <Created>2025-01-21T07:30:00Z</Created>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>12000</WindowHeight>
+  <WindowWidth>18000</WindowWidth>
+  <WindowTopX>0</WindowTopX>
+  <WindowTopY>0</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="Heading">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#4472C4" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="Required">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10"/>
+   <Interior ss:Color="#FCE4EC" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="Optional">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10"/>
+   <Interior ss:Color="#F8F9FA" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="Example">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#CCCCCC"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10" ss:Color="#28A745" ss:Italic="1"/>
+   <Interior ss:Color="#E8F5E8" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="1_Produtos">
+  <Table ss:ExpandedColumnCount="11" ss:ExpandedRowCount="22" x:FullColumns="1" x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="200"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Column ss:AutoFitWidth="0" ss:Width="80"/>
+   <Column ss:AutoFitWidth="0" ss:Width="70"/>
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="150"/>
+   <Column ss:AutoFitWidth="0" ss:Width="150"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Column ss:AutoFitWidth="0" ss:Width="140"/>
+   <Column ss:AutoFitWidth="0" ss:Width="70"/>
+   <Row>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">nome</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">descricao</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">categoria</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">preco</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">estoque</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">codigo_barras</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">principio_ativo</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">apresentacao</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">laboratorio</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">prescricao_obrigatoria</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">ativo</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Dipirona 500mg</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Analgésico e antipirético - 20 comp.</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: analgesicos</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 15.90</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 50</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 7891234567890</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Dipirona Sódica</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 20 comprimidos</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: EMS</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: false</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: true</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="2_Promocoes">
+  <Table ss:ExpandedColumnCount="10" ss:ExpandedRowCount="17" x:FullColumns="1" x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="150"/>
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="180"/>
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="90"/>
+   <Column ss:AutoFitWidth="0" ss:Width="110"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Column ss:AutoFitWidth="0" ss:Width="70"/>
+   <Row>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">produto_nome</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">produto_codigo_barras</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">nome_promocao</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">apresentacao</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">preco_normal</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">preco_promocional</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">desconto_percentual</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">data_inicio</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">data_fim</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">ativa</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Dipirona 500mg</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 7891234567890</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Super Desconto Dipirona</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 20 comprimidos</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 15.90</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 12.90</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 18.87</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 2024-01-15</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 2024-02-15</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: true</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="3_Configuracao">
+  <Table ss:ExpandedColumnCount="4" ss:ExpandedRowCount="11" x:FullColumns="1" x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="200"/>
+   <Column ss:AutoFitWidth="0" ss:Width="250"/>
+   <Column ss:AutoFitWidth="0" ss:Width="200"/>
+   <Column ss:AutoFitWidth="0" ss:Width="100"/>
+   <Row>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">chave</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">valor</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">descricao</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">categoria</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">nome_farmacia</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Farmácia Central</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Nome da farmácia nas mensagens</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">info_basica</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">endereco_completo</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Rua das Flores, 123 - Centro</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Endereço completo</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">info_basica</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">telefone_contato</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: (11) 3333-4444</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Telefone principal</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">info_basica</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">horario_funcionamento</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Seg-Sex: 8h-22h</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Horários de funcionamento</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">info_basica</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">whatsapp_farmacia</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: (11) 99999-9999</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">WhatsApp oficial</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">info_basica</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">entrega_disponivel</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: true</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Se faz entrega</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">servicos</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">taxa_entrega</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 5.00</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Taxa de entrega</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">servicos</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">entrega_gratis_acima</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 50.00</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Valor para entrega grátis</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">servicos</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String">msg_boas_vindas</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Olá! Como posso ajudar?</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">Mensagem de boas-vindas</Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String">mensagens</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="4_Clientes">
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="22" x:FullColumns="1" x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="150"/>
+   <Column ss:AutoFitWidth="0" ss:Width="200"/>
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="120"/>
+   <Column ss:AutoFitWidth="0" ss:Width="250"/>
+   <Column ss:AutoFitWidth="0" ss:Width="150"/>
+   <Row>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">nome</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">email</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">telefone</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">data_nascimento</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">endereco_completo</Data></Cell>
+    <Cell ss:StyleID="Heading"><Data ss:Type="String">preferencias_contato</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: João Silva</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: joao@email.com</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: (11) 99999-8888</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: 1985-03-15</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: Rua A, 123 - Bairro</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ex: WhatsApp preferido</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Required"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Optional"><Data ss:Type="String"></Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>

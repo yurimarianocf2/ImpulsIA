@@ -1,57 +1,27 @@
 {
-  "name": "farmacia-dashboard",
-  "version": "0.1.0",
-  "private": true,
+  "name": "mariano",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "node -r dotenv/config node_modules/next/dist/bin/next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "live-server --open=impulsia-landing-page.html",
+    "build": "if exist dist rmdir /s /q dist && mkdir dist && copy *.html dist && xcopy css dist\\css /E /I && copy *.jpg dist && copy *.png dist && copy *.jpeg dist",
+    "serve": "live-server dist --port=3001"
   },
-  "dependencies": {
-    "@n8n/chat": "^0.44.0",
-    "@radix-ui/react-dialog": "^1.1.14",
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-progress": "^1.1.7",
-    "@radix-ui/react-select": "^2.2.5",
-    "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-tabs": "^1.1.12",
-    "@smithery/cli": "^1.2.12",
-    "@supabase/auth-helpers-nextjs": "^0.10.0",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.38.0",
-    "@swc/helpers": "^0.5.17",
-    "@types/papaparse": "^5.3.16",
-    "autoprefixer": "^10.4.21",
-    "axios": "^1.10.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
-    "dotenv": "^16.5.0",
-    "exa-js": "^1.8.17",
-    "framer-motion": "^11.0.0",
-    "lucide-react": "^0.400.0",
-    "next": "^14.2.15",
-    "papaparse": "^5.5.3",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-dropzone": "^14.3.8",
-    "react-hook-form": "^7.59.0",
-    "styled-jsx": "^5.1.7",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yurimarianocf2/FarmacIA.git"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yurimarianocf2/FarmacIA/issues"
+  },
+  "homepage": "https://github.com/yurimarianocf2/FarmacIA#readme",
   "devDependencies": {
-    "@types/date-fns": "^2.5.3",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.30",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "live-server": "^1.2.2"
   }
 }

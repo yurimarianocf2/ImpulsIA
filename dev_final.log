@@ -1,0 +1,124 @@
+
+> farmabot-pro-dashboard@0.1.0 dev
+> node -r dotenv/config node_modules/next/dist/bin/next dev
+
+  ▲ Next.js 14.2.15
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 17.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 5.9s (491 modules)
+ GET / 200 in 6337ms
+ ✓ Compiled /test in 349ms (493 modules)
+ GET /test 200 in 542ms
+Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/app-router.js#" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7) {
+  digest: '2440922827'
+}
+ ⨯ Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/src/app/error.tsx#default" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "253753154"
+ ⨯ Internal error: Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/app-router.js#" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+digest: "2440922827"
+ ⨯ Internal error: Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/client-page.js#ClientPageRoot" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+digest: "1170425707"
+ ⨯     at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "2327610724"
+ ⨯ Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/src/app/global-error.tsx#default" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+digest: "3300551021"
+ ⨯     at stringify (<anonymous>)
+    at stringify (<anonymous>)
+digest: "581589732"
+ ⨯ Internal error: Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/app-router.js#" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+digest: "2440922827"
+ ⨯ Internal error: Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/app-router.js#" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+digest: "2440922827"
+ ⨯ Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/src/app/global-error.tsx#default" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at stringify (<anonymous>)
+digest: "3300551021"
+ ⨯ Error: Could not find the module "/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/client/components/app-router.js#" in the React Client Manifest. This is probably a bug in the React Server Components bundler.
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266905
+    at eN (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:267100)
+    at eF (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:271984)
+    at /mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:265814
+    at Array.toJSON (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:266278)
+    at stringify (<anonymous>)
+    at eq (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:274646)
+    at eJ (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:275164)
+    at Timeout._onTimeout (/mnt/f/Yuri/Instagram/Landing Page Mirella/mariano/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:264951)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7) {
+  digest: '2440922827',
+  page: '/'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1186ms (719 modules)
+ HEAD / 500 in 7524ms
+ ✓ Compiled /_not-found in 452ms (716 modules)
+ GET / 404 in 864ms
+ ✓ Compiled /_error in 301ms (718 modules)
+ GET / 404 in 198ms
+ GET /_next/static/chunks/main-app.js?v=1751284203082 404 in 129ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 115ms
+ GET /_next/static/chunks/app/global-error.js 404 in 95ms
+ GET /_next/static/chunks/app/error.js 404 in 84ms
+[?25h

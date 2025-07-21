@@ -1,17 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(claude-code mcp:*)",
-      "Bash(claude mcp:*)",
-      "Bash(claude --restart)",
-      "mcp__supabase__list_tables",
       "mcp__supabase__execute_sql",
-      "mcp__supabase__get_advisors",
       "mcp__supabase__apply_migration",
-      "Bash(find:*)",
+      "mcp__supabase__list_tables",
       "Bash(grep:*)",
-      "Bash(rm:*)",
-      "Bash(mv:*)"
+      "Bash(python:*)",
+      "Bash(pip3 install:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(sed:*)",
+      "Bash(cp:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(pkill:*)",
+      "Bash(npm i)"
     ],
     "deny": []
   }
