@@ -14,7 +14,10 @@
       "Bash(npm run dev:*)",
       "Bash(npm run build:*)",
       "Bash(pkill:*)",
-      "Bash(npm i)"
+      "Bash(npm i)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
