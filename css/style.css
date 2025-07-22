@@ -64,7 +64,6 @@ header {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
-    text-align: center;
 }
 
 nav {
@@ -683,6 +682,7 @@ footer {
     grid-template-columns: 2fr 1fr;
     gap: 4rem;
     margin-bottom: 2rem;
+    text-align: left;
 }
 
 .footer-brand h3 {
@@ -712,6 +712,9 @@ footer {
     text-decoration: none;
     font-size: var(--fs-small);
     transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .footer-column a:hover {
