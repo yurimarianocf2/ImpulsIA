@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "live-server --open=impulsia-landing-page.html",
+    "dev": "live-server --open=index.html",
     "build": "if exist dist rmdir /s /q dist && mkdir dist && copy *.html dist && xcopy css dist\\css /E /I && copy *.jpg dist && copy *.png dist && copy *.jpeg dist",
     "serve": "live-server dist --port=3001"
   },
@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/yurimarianocf2/FarmacIA#readme",
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.0"
   }
 }
