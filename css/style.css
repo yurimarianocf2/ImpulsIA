@@ -924,5 +924,18 @@ footer {
         opacity: 1 !important;
         visibility: visible !important;
         display: inline !important;
+        animation: none !important;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
+    }
+}
+
+/* Media query adicional para dispositivos móveis */
+@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+    .brand-highlight {
+        animation: none !important;
+        color: #FFD700 !important;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
+        -webkit-text-fill-color: #FFD700 !important;
+        transform: none !important;
     }
 }
