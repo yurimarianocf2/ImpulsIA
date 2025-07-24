@@ -916,7 +916,23 @@ footer {
     }
 }
 
-/* Fix específico para iOS/Safari */
+/* Animação alternativa para iOS/Safari */
+@keyframes ios-brand-glow {
+    0% {
+        color: #FFD700;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+    50% {
+        color: #FFEF94;
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+    }
+    100% {
+        color: #FFD700;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+}
+
+/* Fix específico para iOS/Safari - mantendo animação */
 @supports (-webkit-overflow-scrolling: touch) {
     .brand-highlight {
         color: #FFD700 !important;
@@ -924,18 +940,19 @@ footer {
         opacity: 1 !important;
         visibility: visible !important;
         display: inline !important;
-        animation: none !important;
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
+        animation: ios-brand-glow 2s ease-in-out infinite alternate !important;
+        transform: none !important;
+        will-change: color, text-shadow !important;
     }
 }
 
 /* Media query adicional para dispositivos móveis */
 @media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
     .brand-highlight {
-        animation: none !important;
         color: #FFD700 !important;
-        text-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
         -webkit-text-fill-color: #FFD700 !important;
+        animation: ios-brand-glow 2s ease-in-out infinite alternate !important;
         transform: none !important;
+        will-change: color, text-shadow !important;
     }
 }
