@@ -30,7 +30,13 @@
       "Bash(npm audit:*)",
       "Bash(npm ls:*)",
       "mcp__supabase__list_extensions",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run serve:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
