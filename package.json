@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "live-server --open=index.html",
-    "build": "rm -rf public && mkdir -p public && cp *.html public/ && cp -r css public/ && cp *.jpg *.png *.jpeg public/ 2>/dev/null || true && cp CNAME public/ 2>/dev/null || true",
+    "build": "(if exist dist rd /s /q dist) && mkdir dist && copy *.html dist && xcopy css dist\css /E /I && copy *.jpg dist && copy *.png dist && copy *.jpeg dist && copy CNAME dist",
     "serve": "live-server dist --port=3001"
   },
   "repository": {
