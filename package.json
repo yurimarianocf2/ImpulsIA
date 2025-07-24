@@ -1,26 +1,26 @@
 {
-  "name": "mariano",
+  "name": "impulsia",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Landing page para ImpulsIA",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "live-server --open=index.html",
-    "build": "if exist dist rmdir /s /q dist && mkdir dist && copy *.html dist && xcopy css dist\\css /E /I && copy *.jpg dist && copy *.png dist && copy *.jpeg dist",
+    "build": "rm -rf dist && mkdir -p dist && cp *.html dist/ && cp -r css dist/ && cp *.jpg *.png *.jpeg dist/ 2>/dev/null || true && cp CNAME dist/ 2>/dev/null || true",
     "serve": "live-server dist --port=3001"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yurimarianocf2/FarmacIA.git"
+    "url": "git+https://github.com/yurimarianocf2/ImpulsIA.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["landing-page", "impulsia", "website"],
+  "author": "Yuri Mariano",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/yurimarianocf2/FarmacIA/issues"
+    "url": "https://github.com/yurimarianocf2/ImpulsIA/issues"
   },
-  "homepage": "https://github.com/yurimarianocf2/FarmacIA#readme",
+  "homepage": "https://github.com/yurimarianocf2/ImpulsIA#readme",
   "devDependencies": {
     "live-server": "^1.2.0"
   }
