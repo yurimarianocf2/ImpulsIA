@@ -22,13 +22,6 @@
 - `5ec2d187-c171-4824-adbf-e7ed7d23e1c7.png`
 - `972b06ab-5e12-4f13-93ba-290e11b20de1.png`
 - `97316AF1-79D7-499E-96BF-849794AA45F5.jpeg`
-- `Sem título.png`
-- `Sem título2.png`
-- `Sem título3.png`
-- `Sem título4.png`
-- `Sem título5.png`
-- `Sem título6.png`
-- `Sem título7.png`
 - `c940622d-625c-4ae7-b471-8934e63f662c.png`
 
 ### Arquivos que NÃO devem ir para o GitHub
